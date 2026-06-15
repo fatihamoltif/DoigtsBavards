@@ -74,13 +74,25 @@ export class EcranConversation {
       this.pastilleCamera.classList.add('active')
       this.etatCamera.textContent = 'Caméra active'
     } catch (erreur) {
-      const refus =
-        erreur && (erreur.name === 'NotAllowedError' || erreur.name === 'SecurityError')
-      this.messageCamera.textContent = refus
-        ? 'Accès caméra refusé. Autorisez la caméra pour reconnaître les lettres.'
-        : "Impossible d'initialiser la caméra ou le modèle."
+      this.messageCamera.textContent = this.messageErreurCamera(erreur)
     } finally {
       this.boutonCamera.disabled = false
+    }
+  }
+
+  /** Mappe une exception caméra à un message d'erreur lisible. */
+  messageErreurCamera(erreur) {
+    if (!erreur) return "Impossible d'initialiser la caméra ou le modèle."
+    switch (erreur.name) {
+      case 'NotAllowedError':
+      case 'SecurityError':
+        return "Accès caméra refusé. Autorisez la caméra pour reconnaître les lettres."
+      case 'NotFoundError':
+        return "Aucune caméra détectée sur cet appareil."
+      case 'NotReadableError':
+        return "La caméra est déjà utilisée par une autre application ou est en panne."
+      default:
+        return "Impossible d'ouvrir la caméra : " + (erreur.message || erreur)
     }
   }
 

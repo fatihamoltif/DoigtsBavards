@@ -1,0 +1,38 @@
+import json
+import glob
+import os
+
+# Se déplacer dans le dossier contenant les fichiers JSON (dossier entrainement)
+ICI = os.path.dirname(os.path.abspath(__file__))
+
+# 1. Charger tous les exports de la Collecte
+echantillons = []
+chemins_json = glob.glob(os.path.join(ICI, '*.json'))
+
+# Exclure fixtures_landmarks.json du modèle d'entraînement
+chemins_json = [c for c in chemins_json if not c.endswith('fixtures_landmarks.json')]
+
+for chemin in chemins_json:
+    with open(chemin, encoding='utf-8') as f:
+        echantillons += json.load(f)
+
+# 2. Regrouper les vecteurs par lettre (KNN sur prototypes)
+prototypes = {}
+for e in echantillons:
+    if 'lettre' in e and 'vecteur' in e:
+        prototypes.setdefault(e['lettre'], []).append(e['vecteur'])
+
+# 3. Exporter au format lu par le JS
+modele = {
+    'type': 'knn',
+    'prototypes': prototypes
+}
+
+chemin_sortie = os.path.join(os.path.dirname(ICI), 'modeles', 'modele-lettres.json')
+# Créer le dossier parent s'il n'existe pas
+os.makedirs(os.path.dirname(chemin_sortie), exist_ok=True)
+
+with open(chemin_sortie, 'w', encoding='utf-8') as f:
+    json.dump(modele, f, ensure_ascii=False, indent=2)
+
+print('Modèle écrit :', {l: len(v) for l, v in prototypes.items()})
