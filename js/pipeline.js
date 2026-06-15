@@ -3,7 +3,7 @@
  *
  * Sécurité / vie privée (principes appliqués ici) :
  *   - la caméra n'est demandée QUE sur clic explicite (jamais au chargement) ;
- *   - audio: false : on ne demande jamais le micro avec la caméra ;
+ *   - `audio: false` : on ne demande jamais le micro avec la caméra ;
  *   - les pistes vidéo sont ARRÊTÉES à l'arrêt (le voyant caméra s'éteint) ;
  *   - aucun pixel n'est stocké ni transmis : on extrait des coordonnées,
  *     trame par trame, et c'est tout ;
@@ -25,30 +25,26 @@ const LIAISONS_MAIN = [
 
 export class PipelineCamera {
   constructor() {
-    this.latenceMs = 0
     this.flux = null // MediaStream de la webcam
     this.detecteur = null // HandLandmarker MediaPipe
     this.boucleActive = false
     this.idBoucle = null
   }
 
+  /** Charge le modèle MediaPipe (une seule fois). */
   async chargerModele() {
     if (this.detecteur) return
     const fileset = await FilesetResolver.forVisionTasks('mediapipe/wasm')
-    const options = {
-      baseOptions: { modelAssetPath: 'modeles/hand_landmarker.task', delegate: 'GPU' },
+    this.detecteur = await HandLandmarker.createFromOptions(fileset, {
+      baseOptions: {
+        modelAssetPath: 'modeles/hand_landmarker.task',
+        delegate: 'GPU',
+      },
       runningMode: 'VIDEO',
-      numHands: 1,
+      numHands: 1, // dactylologie : une seule main
       minHandDetectionConfidence: 0.5,
       minTrackingConfidence: 0.5,
-    }
-    try {
-      this.detecteur = await HandLandmarker.createFromOptions(fileset, options)
-    } catch (erreur) {
-      console.warn('GPU indisponible, repli sur CPU.', erreur)
-      options.baseOptions.delegate = 'CPU'   // ← repli
-      this.detecteur = await HandLandmarker.createFromOptions(fileset, options)
-    }
+    })
   }
 
   /**
@@ -59,61 +55,48 @@ export class PipelineCamera {
    * @param {(main: {landmarks: object[], lateralite: string} | null) => void} surTrame
    *        — appelée à chaque trame avec la main détectée (ou null).
    */
- async demarrer(video, canvas, surTrame) {
-  try {
+  async demarrer(video, canvas, surTrame) {
+    // Caméra seule, jamais le micro (moindre privilège).
     this.flux = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
       audio: false,
     })
-  } catch (erreur) {
-    throw new Error(this.messageErreurCamera(erreur))
-  }
+    video.srcObject = this.flux
+    await video.play()
 
-  video.srcObject = this.flux
-  await video.play()
+    await this.chargerModele()
 
-  await this.chargerModele()
+    const contexte = canvas.getContext('2d')
+    this.boucleActive = true
 
-  const contexte = canvas.getContext('2d')
-  this.boucleActive = true
+    const boucle = () => {
+      if (!this.boucleActive) return
 
-  const boucle = () => {
-    if (!this.boucleActive) return
+      if (video.readyState >= 2) {
+        // Le canvas suit la taille réelle de la vidéo.
+        if (canvas.width !== video.videoWidth) {
+          canvas.width = video.videoWidth
+          canvas.height = video.videoHeight
+        }
 
-    if (video.readyState >= 2) {
-      if (canvas.width !== video.videoWidth) {
-        canvas.width = video.videoWidth
-        canvas.height = video.videoHeight
+        const resultat = this.detecteur.detectForVideo(video, performance.now())
+        const landmarks = resultat.landmarks && resultat.landmarks[0]
+
+        if (landmarks) {
+          const lateralite =
+            (resultat.handedness?.[0]?.[0]?.categoryName) || 'Right'
+          this.dessinerMain(contexte, landmarks, canvas.width, canvas.height)
+          surTrame({ landmarks, lateralite })
+        } else {
+          contexte.clearRect(0, 0, canvas.width, canvas.height)
+          surTrame(null)
+        }
       }
-
-      const t0 = performance.now()
-      const resultat = this.detecteur.detectForVideo(video, t0)
-      const dureeDetection = performance.now() - t0
-
-      this.latenceMs =
-        this.latenceMs === 0
-          ? dureeDetection
-          : 0.8 * this.latenceMs + 0.2 * dureeDetection
-
-      const landmarks = resultat.landmarks && resultat.landmarks[0]
-
-      if (landmarks) {
-        const lateralite =
-          (resultat.handedness?.[0]?.[0]?.categoryName) || 'Right'
-
-        this.dessinerMain(contexte, landmarks, canvas.width, canvas.height)
-        surTrame({ landmarks, lateralite })
-      } else {
-        contexte.clearRect(0, 0, canvas.width, canvas.height)
-        surTrame(null)
-      }
+      this.idBoucle = requestAnimationFrame(boucle)
     }
-
     this.idBoucle = requestAnimationFrame(boucle)
   }
 
-  this.idBoucle = requestAnimationFrame(boucle)
-}
   /** Dessine le squelette de la main (zone live : contraste fort). */
   dessinerMain(ctx, points, largeur, hauteur) {
     ctx.clearRect(0, 0, largeur, hauteur)
@@ -149,14 +132,6 @@ export class PipelineCamera {
     if (canvas) {
       const ctx = canvas.getContext('2d')
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-    }
-  }
-  messageErreurCamera(erreur) {
-  switch (erreur.name) {
-    case 'NotAllowedError':  return "Accès caméra refusé. Autorisez la caméra puis réessayez."
-    case 'NotFoundError':    return "Aucune caméra détectée sur cet appareil."
-    case 'NotReadableError': return "La caméra est déjà utilisée par une autre application."
-    default:                 return "Impossible d'ouvrir la caméra : " + erreur.message
     }
   }
 }
