@@ -40,6 +40,8 @@ export class EcranConversation {
     this.classifieur = null // chargé au démarrage de la caméra
     this.texte = ''
     this.cameraActive = false
+    this.dernierVecteur = null // vecteur normalisé de la dernière trame
+    this.surValidationLettre = null // callback appelée lors d'une validation de lettre
 
     this.brancherEvenements()
     this.brancherReglages()
@@ -105,7 +107,10 @@ export class EcranConversation {
     let prediction = null
     if (main) {
       const vecteur = normaliserMain(main.landmarks, main.lateralite)
-      if (vecteur) prediction = this.classifieur.predire(vecteur)
+      if (vecteur) {
+        this.dernierVecteur = vecteur
+        prediction = this.classifieur.predire(vecteur)
+      }
     }
     const resultat = this.machine.pousser(prediction, performance.now())
     this.appliquerResultat(resultat, main !== null)
@@ -115,6 +120,9 @@ export class EcranConversation {
   appliquerResultat(resultat, mainVisible) {
     if (resultat.validation?.type === 'lettre') {
       this.ajouterLettre(resultat.validation.lettre)
+      if (this.surValidationLettre && this.dernierVecteur) {
+        this.surValidationLettre(resultat.validation.lettre, this.dernierVecteur)
+      }
     } else if (resultat.validation?.type === 'espace') {
       // Une espace seulement si le texte ne se termine pas déjà par une.
       if (this.texte && !this.texte.endsWith(' ')) {

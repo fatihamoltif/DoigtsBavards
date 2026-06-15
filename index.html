@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
         content="Outil local d'aide à la communication entre personne sourde et personne entendante. Aucune vidéo ne quitte votre appareil." />
-  <title>Épelle — LSF ↔ Français</title>
+  <title>DoigtsBavards — LSF ↔ Français</title>
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/composants.css" />
   <link rel="stylesheet" href="css/animations.css" />
@@ -18,7 +18,7 @@
     <!-- 1. Hero : titre serif + mot qui s'épelle lettre par lettre. -->
     <div class="hero">
       <p class="eyebrow-tiret">Dactylologie LSF · 100 % local</p>
-      <h1 class="titre-hero">Épelle</h1>
+      <h1 class="titre-hero">Doigts<span class="badge-titre">Bavards</span></h1>
       <!-- Typo cinétique : le mot s'assemble lettre par lettre (aria-hidden,
            le sens est porté par le pitch). -->
       <p id="mot-epele" class="mot-epele" aria-hidden="true"></p>
@@ -111,8 +111,8 @@
   <div id="application">
     <header class="entete">
       <button id="lien-accueil" class="marque" aria-label="Retour à l'accueil">
-        <span class="logo">É</span>
-        <span class="marque-texte">Épelle <small>LSF ↔ Français</small></span>
+        <span class="logo">DB</span>
+        <span class="marque-texte">Doigts<span class="text-accent-nav">Bavards</span> <small>LSF ↔ Français</small></span>
       </button>
       <nav class="menu" aria-label="Sections">
         <div class="onglets">
@@ -274,12 +274,85 @@
               entraîner le modèle (script Python). Aucun pixel conservé.
             </p>
           </div>
-          <article class="carte carte-a-venir">
-            <h3>Prochaine étape</h3>
-            <p>Choix de la lettre, identifiant signeur obligatoire, capture
-               d'exemples variés (angles, distances), export JSON vers
-               <code>entrainement/</code>.</p>
-          </article>
+
+          <div class="colonnes">
+            <!-- Caméra live pour la collecte -->
+            <article class="carte">
+              <div class="carte-entete">
+                <div>
+                  <p class="surtitre">Visualisation</p>
+                  <h3>Retour Caméra</h3>
+                  <p class="sous-titre">Placez votre main face à la caméra</p>
+                </div>
+                <p class="indicateur-etat">
+                  <span id="pastille-camera-collecte" class="pastille"></span>
+                  <span id="etat-camera-collecte">En pause</span>
+                </p>
+              </div>
+
+              <!-- Zone live : vidéo + squelette -->
+              <div class="scene-camera">
+                <video id="video-camera-collecte" playsinline muted></video>
+                <canvas id="canvas-squelette-collecte"></canvas>
+                <button id="bouton-couper-collecte" class="bouton bouton-fort bouton-couper" hidden>
+                  Couper la caméra
+                </button>
+                <div id="voile-camera-collecte" class="voile-camera">
+                  <p>La caméra ne sert qu'à extraire des coordonnées de squelette,
+                     en local. Aucune image n'est enregistrée ni envoyée.</p>
+                  <button id="bouton-camera-collecte" class="bouton">Activer la caméra</button>
+                  <p id="message-camera-collecte" class="message-erreur" role="status"></p>
+                </div>
+              </div>
+            </article>
+
+            <!-- Configuration & Enregistrement -->
+            <article class="carte">
+              <div class="carte-entete">
+                <div>
+                  <p class="surtitre">Configuration</p>
+                  <h3>Session d'enregistrement</h3>
+                  <p class="sous-titre">Identifiant et lettre à capturer</p>
+                </div>
+              </div>
+
+              <!-- Formulaire de configuration -->
+              <!-- Formulaire de configuration -->
+              <div class="formulaire-collecte">
+                <label>
+                  Nom du signeur (obligatoire)
+                  <input id="input-signeur" type="text" placeholder="Ex: jade" required />
+                </label>
+
+                <label>
+                  Lettre à signer
+                  <select id="select-lettre">
+                    <!-- Sera peuplé par JS -->
+                  </select>
+                </label>
+              </div>
+
+              <!-- Zone d'enregistrement -->
+              <div class="zone-enregistrement">
+                <div class="enregistrement-badge-rangee">
+                  <p class="etiquette">Statut de la capture</p>
+                  <span id="badge-enregistrement" class="badge-mouvement">Enregistrement en cours</span>
+                </div>
+                <div class="compteur-rangee">
+                  <span id="compteur-captures">0</span>
+                  <span class="sous-titre">exemples capturés</span>
+                </div>
+                <p id="aide-capture" class="sous-titre">Entrez un nom de signeur et lancez la caméra pour commencer.</p>
+              </div>
+
+              <!-- Contrôles -->
+              <div class="rangee-boutons">
+                <button id="bouton-rec-collecte" class="bouton fort" disabled>🔴 Enregistrer</button>
+                <button id="bouton-supprimer-collecte" class="bouton bouton-contour" disabled>Réinitialiser</button>
+                <button id="bouton-export-collecte" class="bouton" disabled>📥 Exporter JSON</button>
+              </div>
+            </article>
+          </div>
         </section>
 
         <!-- ------------------------ CORRECTIONS -------------------------- -->
@@ -292,12 +365,71 @@
               données locales d'entraînement.
             </p>
           </div>
-          <article class="carte carte-a-venir">
-            <h3>Prochaine étape</h3>
-            <p>Correction d'une lettre validée à tort, liste des corrections,
-               export JSON pour le réentraînement.</p>
-          </article>
+
+          <div class="colonnes">
+            <!-- Historique des lettres reconnues à corriger -->
+            <article class="carte">
+              <div class="carte-entete">
+                <div>
+                  <p class="surtitre">Historique des saisies</p>
+                  <h3>Corriger les erreurs</h3>
+                  <p class="sous-titre">Sélectionnez la vraie lettre pour chaque trame enregistrée</p>
+                </div>
+              </div>
+
+              <!-- Liste vide par défaut -->
+              <div id="liste-corrections">
+                <p id="placeholder-corrections" class="placeholder">
+                  Aucune lettre reconnue dans cette session. Utilisez d'abord la section Conversation pour générer des saisies.
+                </p>
+              </div>
+            </article>
+
+            <!-- Actions d'export -->
+            <article class="carte">
+              <div class="carte-entete">
+                <div>
+                  <p class="surtitre">Export</p>
+                  <h3>Sauvegarder les corrections</h3>
+                  <p class="sous-titre">Exporter au format d'entraînement</p>
+                </div>
+              </div>
+
+              <div class="zone-enregistrement zone-enregistrement-corrections">
+                <div class="enregistrement-badge-rangee">
+                  <p class="etiquette">Corrections prêtes</p>
+                  <span id="compteur-corrections">0</span>
+                </div>
+                <p class="sous-titre">Chaque correction produit un nouvel échantillon d'entraînement contenant le vecteur normalisé et le bon label.</p>
+              </div>
+
+              <div class="rangee-boutons rangee-boutons-colonne">
+                <button id="bouton-export-corrections" class="bouton fort" disabled>📥 Exporter les corrections (.json)</button>
+                <button id="bouton-clear-corrections" class="bouton bouton-contour" disabled>Tout effacer</button>
+              </div>
+            </article>
+          </div>
         </section>
+
+        <!-- Modal du Dictionnaire -->
+        <div id="modal-dictionnaire" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modal-titre">
+          <div class="modal-contenu">
+            <button id="bouton-fermer-modal" class="bouton-fermer" aria-label="Fermer la vue">&times;</button>
+            <div class="modal-corps">
+              <div class="modal-visuel">
+                <!-- SVG squelette ou illustration de la lettre -->
+                <svg id="svg-illustration-lettre" class="main-squelette"></svg>
+                <div id="symbole-lettre">A</div>
+              </div>
+              <div class="modal-infos">
+                <h3 id="modal-titre">Lettre A</h3>
+                <span id="modal-badge" class="badge-mouvement">avec mouvement</span>
+                <p id="modal-description"></p>
+                <div id="modal-astuce"></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
       </div>
     </div>

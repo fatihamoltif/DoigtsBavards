@@ -120,12 +120,14 @@ body.mode-application #application {
 /* ----------------------------- Micro-interactions ------------------------ */
 .bouton {
   transition:
-    background-color 0.18s ease,
-    color 0.18s ease,
-    transform 0.18s ease;
+    background-color 0.25s var(--ressort),
+    color 0.25s var(--ressort),
+    border-color 0.25s var(--ressort),
+    transform 0.25s var(--ressort),
+    box-shadow 0.25s var(--ressort);
 }
 .bouton:hover:not(:disabled) {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 .bouton:active:not(:disabled) {
   transform: translateY(0);

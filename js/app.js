@@ -11,15 +11,28 @@ import { EcranConversation } from './ui.js'
 import { ClassifieurMock } from './classifieur.js'
 import { CONFIG, ALPHABET, LETTRES_MOBILES } from './config.js'
 import { initialiserAccueil } from './accueil.js'
+import { initialiserDictionnaire } from './dictionnaire.js'
+import { EcranCollecte } from './collecte.js'
+import { ManagerCorrections } from './corrections.js'
 
 initialiserAccueil()
 const conversation = new EcranConversation()
+const collecte = new EcranCollecte()
+const corrections = new ManagerCorrections()
+
+// Lier la validation de lettre dans la Conversation à la liste de Corrections
+conversation.surValidationLettre = (lettre, vecteur) => {
+  corrections.ajouterSaisie(lettre, vecteur)
+}
 
 new Navigation({
   // Changer de section coupe la caméra : elle ne tourne jamais « dans le dos ».
   surChangement: (section) => {
     if (section !== 'conversation' && conversation.cameraActive) {
       conversation.arreterCamera()
+    }
+    if (section !== 'collecte' && collecte.cameraActive) {
+      collecte.arreterCamera()
     }
   },
 })
@@ -30,6 +43,9 @@ const grille = document.getElementById('grille-alphabet')
 for (const lettre of ALPHABET) {
   const carte = document.createElement('figure')
   carte.className = 'carte-lettre'
+  carte.setAttribute('tabindex', '0') // Accessibilité clavier
+  carte.setAttribute('role', 'button')
+  carte.setAttribute('aria-label', `Voir le geste pour la lettre ${lettre}`)
   const grand = document.createElement('span')
   grand.className = 'lettre-grande'
   grand.textContent = lettre
@@ -42,6 +58,9 @@ for (const lettre of ALPHABET) {
   }
   grille.appendChild(carte)
 }
+
+// Initialiser le comportement du dictionnaire (modal)
+initialiserDictionnaire()
 
 /* ------------------------------ Mode démo -------------------------------- */
 if (new URLSearchParams(location.search).get('demo') === '1') {

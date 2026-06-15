@@ -1,61 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 /*
  * base.css — fondations : palette, polices, typographie, page d'accueil.
  *
- * Palette éditoriale (rôles) :
- *   --encre        #25344F  surface sombre dominante, texte principal
- *   --encre-fonce  #1A2438  grandes sections sombres
- *   --papier       #FBFAF8  fond clair, texte sur fond sombre
- *   --accent       #D5B893  accent principal (tan) : boutons, surlignages
- *   --accent-fort  #632024  pop fort : enregistrement, erreurs, abstention
- *   --chaleureux   #6F4D38  accent secondaire : survols, détails
- *   --discret      #617891  texte secondaire, bordures fines
+ * Palette Épelle Redesign (Cyprus & Soft Jade) :
+ *   --encre        #004643  Cyprus (teinte principale, surface sombre dominante, texte principal)
+ *   --encre-fonce  #002322  Cyprus sombre (fonds et contrastes maximum)
+ *   --papier       #f0f7f5  Fond jade ultra doux premium
+ *   --blanc        #ffffff  Fond de carte
+ *   --accent       #abd1c6  Soft Jade (accents, boutons principaux)
+ *   --accent-fort  #8b2635  Berry Red premium (erreurs, suppressions, enregistrement)
+ *   --chaleureux   #004643  Cyprus (pour les survols ou contrastes)
+ *   --discret      #4e6b66  Vert moyen desaturé (texte secondaire, bordures)
  */
-
-/* ------------------------- Polices auto-hébergées ------------------------ */
-@font-face {
-  font-family: 'Inter';
-  src: url('../polices/inter-latin-400-normal.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Inter';
-  src: url('../polices/inter-latin-500-normal.woff2') format('woff2');
-  font-weight: 500;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Inter';
-  src: url('../polices/inter-latin-600-normal.woff2') format('woff2');
-  font-weight: 600;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Fraunces';
-  src: url('../polices/fraunces-latin-400-normal.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Fraunces';
-  src: url('../polices/fraunces-latin-600-normal.woff2') format('woff2');
-  font-weight: 600;
-  font-display: swap;
-}
 
 /* ------------------------------- Variables ------------------------------- */
 :root {
-  --encre: #25344f;
-  --encre-fonce: #1a2438;
-  --papier: #fbfaf8;
+  --encre: #004643;       
+  --encre-fonce: #002322; 
+  --papier: #f0f7f5;      
   --blanc: #ffffff;
-  --accent: #d5b893;
-  --accent-fort: #632024;
-  --chaleureux: #6f4d38;
-  --discret: #617891;
+  --accent: #abd1c6;      
+  --accent-fort: #8b2635; 
+  --chaleureux: #004643;  
+  --discret: #4e6b66;     
 
-  --serif: 'Fraunces', Georgia, serif;
-  --sans: 'Inter', system-ui, sans-serif;
+  --serif: 'Bebas Neue', system-ui, sans-serif;
+  --sans: 'Plus Jakarta Sans', system-ui, sans-serif;
 
   --rayon: 14px;
   --rayon-grand: 20px;
@@ -147,25 +118,30 @@ button {
 /* Label « eyebrow » en tiret : petites capitales espacées, précédées d'un
    tiret long — la signature typographique du chrome éditorial. */
 .eyebrow-tiret {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: var(--chaleureux);
+  color: var(--encre);
+  opacity: 0.8;
 }
 .eyebrow-tiret::before {
   content: '— ';
 }
 .eyebrow-sur-sombre {
   color: var(--accent);
+  opacity: 1;
 }
 
 .titre-serif {
   font-family: var(--serif);
-  font-size: clamp(1.9rem, 4.5vw, 3rem);
-  font-weight: 600;
-  line-height: 1.12;
-  margin: 0.6rem 0 1rem;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: 0.03em;
+  margin: 0.6rem 0 1.2rem;
+  text-transform: uppercase;
+  color: var(--encre);
 }
 
 /* --- 1. Hero --- */
@@ -182,25 +158,30 @@ button {
 
 .titre-hero {
   font-family: var(--serif);
-  font-size: clamp(3.8rem, 11vw, 7rem);
-  font-weight: 600;
-  line-height: 1;
-  margin: 0.6rem 0 1.2rem;
+  font-size: clamp(4.5rem, 12vw, 8.5rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+  margin: 0.4rem 0 1rem;
+  text-transform: uppercase;
+  color: var(--encre);
 }
 
-/* Le mot qui s'épelle : grandes lettres serif espacées, couleur coffee. */
+/* Le mot qui s'épelle : grandes lettres serif espacées. */
 .mot-epele {
   font-family: var(--serif);
-  font-size: clamp(1.6rem, 4.5vw, 2.6rem);
-  font-weight: 600;
-  letter-spacing: 0.3em;
-  color: var(--chaleureux);
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--encre);
+  opacity: 0.9;
   min-height: 1.4em; /* réserve la place : pas de saut de mise en page */
   margin-bottom: 1.4rem;
+  text-transform: uppercase;
 }
 
 .pitch {
-  font-size: 1.08rem;
+  font-size: 1.15rem;
   color: var(--discret);
   max-width: 32rem;
   margin: 0 auto 2.2rem;
@@ -209,10 +190,11 @@ button {
 .indice-defilement {
   position: absolute;
   bottom: 1.6rem;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--discret);
+  font-weight: 600;
 }
 
 /* --- Sections suivantes --- */
@@ -239,8 +221,10 @@ button {
 
 .temps h3 {
   font-family: var(--serif);
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   margin: 0.3rem 0 0.4rem;
 }
 .temps > p:last-child {
@@ -254,9 +238,9 @@ button {
   height: 150px;
   display: grid;
   place-items: center;
-  border: 1px solid rgb(97 120 145 / 0.2);
+  border: 1px solid rgba(0, 70, 67, 0.12);
   border-radius: var(--rayon-grand);
-  background: rgb(213 184 147 / 0.1); /* tan très doux */
+  background: rgba(171, 209, 198, 0.15); /* Soft Jade avec transparence */
   margin-bottom: 1.1rem;
 }
 
@@ -265,12 +249,14 @@ button {
 }
 .squelette-ligne {
   stroke: var(--encre);
-  stroke-width: 1.6;
+  stroke-width: 1.8;
   stroke-linecap: round;
-  opacity: 0.75;
+  opacity: 0.8;
 }
 .squelette-point {
-  fill: var(--chaleureux);
+  fill: var(--accent);
+  stroke: var(--encre);
+  stroke-width: 1;
 }
 
 /* Temps 2 : anneau de confirmation + lettre, rappel direct de l'app. */
@@ -281,9 +267,9 @@ button {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 3px solid rgb(97 120 145 / 0.25);
-  border-top-color: var(--chaleureux);
-  border-right-color: var(--chaleureux);
+  border: 3px solid rgba(0, 70, 67, 0.15);
+  border-top-color: var(--encre);
+  border-right-color: var(--encre);
   transform: rotate(35deg);
 }
 .illustration-lettre {
@@ -291,16 +277,16 @@ button {
   top: 14px;
   right: 23px;
   font-family: var(--serif);
-  font-weight: 600;
-  font-size: 1.05rem;
+  font-weight: 700;
+  font-size: 1.15rem;
   color: var(--encre);
 }
 
 /* Temps 3 : lettres composées + haut-parleur. */
 .illustration-lettres {
   font-family: var(--serif);
-  font-size: 2.1rem;
-  font-weight: 600;
+  font-size: 2.5rem;
+  font-weight: 700;
   letter-spacing: 0.12em;
   color: var(--encre);
 }
@@ -310,9 +296,9 @@ button {
   right: 14px;
   width: 22px;
   height: 22px;
-  stroke: var(--chaleureux);
+  stroke: var(--encre);
   stroke-width: 1.8;
-  fill: rgb(213 184 147 / 0.4);
+  fill: rgba(171, 209, 198, 0.4);
   stroke-linejoin: round;
   stroke-linecap: round;
 }
