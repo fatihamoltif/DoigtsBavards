@@ -1,0 +1,391 @@
+/*
+ * base.css — fondations : palette, polices, typographie, page d'accueil.
+ *
+ * Palette éditoriale (rôles) :
+ *   --encre        #25344F  surface sombre dominante, texte principal
+ *   --encre-fonce  #1A2438  grandes sections sombres
+ *   --papier       #FBFAF8  fond clair, texte sur fond sombre
+ *   --accent       #D5B893  accent principal (tan) : boutons, surlignages
+ *   --accent-fort  #632024  pop fort : enregistrement, erreurs, abstention
+ *   --chaleureux   #6F4D38  accent secondaire : survols, détails
+ *   --discret      #617891  texte secondaire, bordures fines
+ */
+
+/* ------------------------- Polices auto-hébergées ------------------------ */
+@font-face {
+  font-family: 'Inter';
+  src: url('../polices/inter-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../polices/inter-latin-500-normal.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../polices/inter-latin-600-normal.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Fraunces';
+  src: url('../polices/fraunces-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Fraunces';
+  src: url('../polices/fraunces-latin-600-normal.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+
+/* ------------------------------- Variables ------------------------------- */
+:root {
+  --encre: #25344f;
+  --encre-fonce: #1a2438;
+  --papier: #fbfaf8;
+  --blanc: #ffffff;
+  --accent: #d5b893;
+  --accent-fort: #632024;
+  --chaleureux: #6f4d38;
+  --discret: #617891;
+
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Inter', system-ui, sans-serif;
+
+  --rayon: 14px;
+  --rayon-grand: 20px;
+  --duree: 0.45s;
+  --ressort: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* --------------------------------- Reset --------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--papier);
+  color: var(--encre);
+  line-height: 1.55;
+  min-height: 100vh;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* L'attribut hidden doit toujours gagner, même sur les éléments stylés
+   en display:flex (sinon le navigateur ne peut pas les masquer). */
+[hidden] {
+  display: none !important;
+}
+
+/* Focus clavier toujours visible (accessibilité). */
+:focus-visible {
+  outline: 2px solid var(--encre);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+#accueil :focus-visible,
+.entete :focus-visible {
+  outline-color: var(--accent);
+}
+
+/* ------------------------- Typographie commune --------------------------- */
+.surtitre {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--chaleureux);
+}
+
+.sous-titre {
+  color: var(--discret);
+  font-size: 0.9rem;
+}
+
+.etiquette {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--discret);
+}
+
+/* --------------- Page d'accueil — landing narrative (scroll) ------------- */
+/* Style éditorial : grands titres serif, eyebrows en tiret, beaucoup d'air,
+   révélations au scroll. Fond papier clair, accents tan/coffee parcimonieux. */
+
+#accueil {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: var(--papier);
+  color: var(--encre);
+  overflow-y: auto;
+}
+
+/* Label « eyebrow » en tiret : petites capitales espacées, précédées d'un
+   tiret long — la signature typographique du chrome éditorial. */
+.eyebrow-tiret {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--chaleureux);
+}
+.eyebrow-tiret::before {
+  content: '— ';
+}
+.eyebrow-sur-sombre {
+  color: var(--accent);
+}
+
+.titre-serif {
+  font-family: var(--serif);
+  font-size: clamp(1.9rem, 4.5vw, 3rem);
+  font-weight: 600;
+  line-height: 1.12;
+  margin: 0.6rem 0 1rem;
+}
+
+/* --- 1. Hero --- */
+.hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1.5rem 4rem;
+  position: relative;
+}
+
+.titre-hero {
+  font-family: var(--serif);
+  font-size: clamp(3.8rem, 11vw, 7rem);
+  font-weight: 600;
+  line-height: 1;
+  margin: 0.6rem 0 1.2rem;
+}
+
+/* Le mot qui s'épelle : grandes lettres serif espacées, couleur coffee. */
+.mot-epele {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  color: var(--chaleureux);
+  min-height: 1.4em; /* réserve la place : pas de saut de mise en page */
+  margin-bottom: 1.4rem;
+}
+
+.pitch {
+  font-size: 1.08rem;
+  color: var(--discret);
+  max-width: 32rem;
+  margin: 0 auto 2.2rem;
+}
+
+.indice-defilement {
+  position: absolute;
+  bottom: 1.6rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--discret);
+}
+
+/* --- Sections suivantes --- */
+.section-accueil {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 5rem 1.5rem;
+}
+
+/* Les trois temps du principe. */
+.temps-liste {
+  list-style: none;
+  padding: 0;
+  margin-top: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+@media (max-width: 760px) {
+  .temps-liste {
+    grid-template-columns: 1fr;
+  }
+}
+
+.temps h3 {
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0.3rem 0 0.4rem;
+}
+.temps > p:last-child {
+  font-size: 0.92rem;
+  color: var(--discret);
+}
+
+/* Illustrations : la main telle que l'app la voit (21 points reliés). */
+.illustration {
+  position: relative;
+  height: 150px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgb(97 120 145 / 0.2);
+  border-radius: var(--rayon-grand);
+  background: rgb(213 184 147 / 0.1); /* tan très doux */
+  margin-bottom: 1.1rem;
+}
+
+.main-squelette {
+  height: 78%;
+}
+.squelette-ligne {
+  stroke: var(--encre);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  opacity: 0.75;
+}
+.squelette-point {
+  fill: var(--chaleureux);
+}
+
+/* Temps 2 : anneau de confirmation + lettre, rappel direct de l'app. */
+.illustration-anneau {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid rgb(97 120 145 / 0.25);
+  border-top-color: var(--chaleureux);
+  border-right-color: var(--chaleureux);
+  transform: rotate(35deg);
+}
+.illustration-lettre {
+  position: absolute;
+  top: 14px;
+  right: 23px;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--encre);
+}
+
+/* Temps 3 : lettres composées + haut-parleur. */
+.illustration-lettres {
+  font-family: var(--serif);
+  font-size: 2.1rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--encre);
+}
+.illustration-son {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  width: 22px;
+  height: 22px;
+  stroke: var(--chaleureux);
+  stroke-width: 1.8;
+  fill: rgb(213 184 147 / 0.4);
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* --- 3. Bloc confidentialité : fond sombre, le différenciateur. --- */
+.bloc-confidentialite {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  background: linear-gradient(160deg, var(--encre) 0%, var(--encre-fonce) 100%);
+  color: var(--papier);
+  border-radius: calc(var(--rayon-grand) * 1.4);
+  padding: clamp(1.8rem, 5vw, 3.5rem);
+}
+@media (max-width: 760px) {
+  .bloc-confidentialite {
+    grid-template-columns: 1fr;
+  }
+}
+
+.liste-confidentialite {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  color: rgb(251 250 248 / 0.78);
+  font-size: 0.95rem;
+}
+.liste-confidentialite li {
+  padding-left: 1.3rem;
+  position: relative;
+}
+.liste-confidentialite li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.liste-confidentialite strong {
+  color: var(--papier);
+}
+
+.illustration-sombre {
+  background: rgb(251 250 248 / 0.05);
+  border-color: rgb(251 250 248 / 0.15);
+  height: 200px;
+}
+.illustration-sombre .squelette-ligne {
+  stroke: var(--accent);
+}
+.illustration-sombre .squelette-point {
+  fill: var(--papier);
+}
+
+/* --- 4/5. Posture + entrée. --- */
+.accueil-fin {
+  text-align: center;
+  padding-bottom: 7rem;
+}
+.posture {
+  font-size: 0.95rem;
+  color: var(--discret);
+  max-width: 34rem;
+  margin: 0 auto 2rem;
+}
+.posture strong {
+  color: var(--encre);
+  font-weight: 600;
+}
