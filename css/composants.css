@@ -1,0 +1,500 @@
+/*
+ * composants.css — en-tête, navigation, panneaux, cartes, boutons,
+ * scène caméra, lettre courante, texte composé, transcription, dictionnaire.
+ *
+ * Règle d'or : les ZONES LIVE (vidéo, lettre courante, texte composé) restent
+ * nettes et à fort contraste — pas de décor ni d'animation par-dessus.
+ */
+
+/* -------------------------------- En-tête -------------------------------- */
+.entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: var(--encre);
+  color: var(--papier);
+  padding: 0.9rem 1.5rem;
+}
+
+.marque {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--encre);
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.marque-texte {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-align: left;
+}
+.marque-texte small {
+  display: block;
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 0.7rem;
+  color: rgb(251 250 248 / 0.55);
+}
+
+/* --------------------------- Onglets de sections -------------------------- */
+.onglets {
+  position: relative;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.onglet {
+  position: relative;
+  z-index: 1; /* le texte passe DEVANT l'indicateur */
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgb(251 250 248 / 0.7);
+}
+.onglet:hover {
+  color: var(--papier);
+}
+.onglet.actif {
+  color: var(--encre);
+}
+
+/* L'indicateur (pilule tan) glisse sous l'onglet actif. */
+#indicateur-onglet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  z-index: 0; /* au-dessus du fond de l'en-tête, sous le texte des onglets */
+}
+
+/* --------------------------- Piste de sections ---------------------------- */
+.fenetre-sections {
+  overflow: hidden;
+}
+
+.piste-sections {
+  display: flex;
+  align-items: flex-start;
+}
+
+.panneau {
+  flex: 0 0 100%; /* chaque panneau = exactement une largeur d'écran */
+  min-width: 0;
+  padding: 2.5rem clamp(1.25rem, 4vw, 3rem) 3rem;
+}
+
+/* Largeur de lecture confortable, sans casser la piste glissante. */
+.entete-section,
+.colonnes,
+.grille-alphabet {
+  max-width: 1150px;
+}
+
+.entete-section {
+  margin-bottom: 1.8rem;
+}
+
+.titre-section {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-weight: 600;
+  margin: 0.3rem 0 0.4rem;
+}
+
+/* --------------------------------- Cartes -------------------------------- */
+.colonnes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .colonnes {
+    grid-template-columns: 1fr;
+  }
+}
+
+.carte {
+  background: var(--blanc);
+  border: 1px solid rgb(97 120 145 / 0.2);
+  border-radius: var(--rayon-grand);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.carte h3 {
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.carte-entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.carte-a-venir {
+  background: rgb(213 184 147 / 0.12);
+  max-width: 38rem;
+}
+
+.indicateur-etat {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  color: var(--discret);
+  white-space: nowrap;
+}
+
+.pastille {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgb(97 120 145 / 0.4);
+}
+.pastille.active {
+  background: var(--accent-fort);
+}
+
+/* -------------------------------- Boutons -------------------------------- */
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--encre);
+  font-weight: 500;
+  font-size: 0.92rem;
+}
+.bouton:hover:not(:disabled) {
+  background: var(--chaleureux);
+  color: var(--papier);
+}
+.bouton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.bouton-grand {
+  padding: 0.9rem 2.2rem;
+  font-size: 1.05rem;
+}
+
+.bouton-contour {
+  background: transparent;
+  border: 1px solid rgb(97 120 145 / 0.45);
+  color: var(--encre);
+}
+.bouton-contour:hover:not(:disabled) {
+  background: rgb(37 52 79 / 0.06);
+  border-color: var(--encre);
+  color: var(--encre);
+}
+
+.bouton-fort,
+.bouton.fort {
+  background: var(--accent-fort);
+  color: var(--papier);
+}
+.bouton-fort:hover:not(:disabled),
+.bouton.fort:hover:not(:disabled) {
+  background: #501a1d;
+  color: var(--papier);
+}
+
+.rangee-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+/* ----------------------------- Scène caméra ------------------------------ */
+.scene-camera {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--rayon);
+  overflow: hidden;
+  background: var(--encre-fonce);
+}
+
+/* Vidéo en miroir (effet selfie) ; le squelette suit le même miroir. */
+.scene-camera video,
+.scene-camera canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.bouton-couper {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  z-index: 2;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.82rem;
+}
+
+.voile-camera {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  color: rgb(251 250 248 / 0.75);
+  font-size: 0.85rem;
+  background: var(--encre-fonce);
+}
+.voile-camera.cache {
+  display: none;
+}
+
+.message-erreur {
+  color: var(--accent);
+  font-size: 0.82rem;
+  min-height: 1.2em;
+}
+
+/* ------------------- Lettre courante + anneau de progression ------------- */
+.zone-lettre {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  border: 1px solid rgb(97 120 145 / 0.2);
+  border-radius: var(--rayon);
+  padding: 0.9rem 1.2rem;
+}
+
+.cercle-lettre {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  flex-shrink: 0;
+}
+
+.cercle-lettre svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg); /* la progression démarre en haut */
+}
+
+.anneau-fond,
+.anneau {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.anneau-fond {
+  stroke: rgb(97 120 145 / 0.18);
+}
+.anneau {
+  stroke: var(--chaleureux);
+  stroke-dasharray: 163.4; /* 2 × π × 26 */
+  stroke-dashoffset: 163.4; /* vide au départ, se remplit pendant CONFIRMATION */
+}
+
+.lettre-candidate {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--serif);
+  font-size: 2.1rem;
+  font-weight: 600;
+  color: var(--encre);
+}
+.lettre-candidate.discrete {
+  color: rgb(97 120 145 / 0.55);
+}
+
+/* ------------------------------ Texte composé ---------------------------- */
+.zone-texte {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Chaque caractère est dans un <span> (pour animer le dernier) ; `pre`
+   préserve la largeur des espaces, sinon le flex les replie à zéro. */
+.texte-compose span {
+  white-space: pre;
+}
+
+.texte-compose {
+  min-height: 3.4rem;
+  border: 1px solid rgb(97 120 145 / 0.2);
+  border-radius: var(--rayon);
+  padding: 0.7rem 1rem;
+  font-family: var(--serif);
+  font-size: 1.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--encre);
+  background: var(--papier);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.curseur {
+  display: inline-block;
+  width: 2px;
+  height: 1.6rem;
+  background: var(--encre);
+  margin-left: 2px;
+}
+
+/* ----------------------------- Réglages repliés -------------------------- */
+.reglages summary {
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--discret);
+}
+
+.grille-reglages {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem 1.5rem;
+  padding-top: 0.9rem;
+}
+@media (max-width: 640px) {
+  .grille-reglages {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grille-reglages label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--discret);
+}
+.grille-reglages span {
+  font-weight: 600;
+  color: var(--encre);
+}
+.grille-reglages input[type='range'] {
+  accent-color: var(--chaleureux);
+}
+
+/* ------------------------------ Transcription ---------------------------- */
+.flux-transcription {
+  min-height: 16rem;
+  max-height: 22rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  border: 1px solid rgb(97 120 145 / 0.2);
+  border-radius: var(--rayon);
+  padding: 1rem;
+  background: var(--papier);
+}
+
+.bulle {
+  align-self: flex-start;
+  background: rgb(213 184 147 / 0.25);
+  border-radius: 16px 16px 16px 4px;
+  padding: 0.5rem 0.9rem;
+  max-width: 85%;
+}
+
+.placeholder {
+  margin: auto;
+  text-align: center;
+  color: var(--discret);
+  font-size: 0.9rem;
+}
+
+.ligne-interim {
+  font-style: italic;
+  color: var(--discret);
+}
+
+.note {
+  font-size: 0.75rem;
+  color: var(--discret);
+}
+
+/* ------------------------------ Dictionnaire ----------------------------- */
+.grille-alphabet {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.9rem;
+}
+
+.carte-lettre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--blanc);
+  border: 1px solid rgb(97 120 145 / 0.2);
+  border-radius: var(--rayon);
+  padding: 1.1rem 0.5rem;
+}
+
+.lettre-grande {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: 600;
+}
+
+.badge-mouvement {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-fort);
+  background: rgb(99 32 36 / 0.08);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+}
+
+/* ---------------------------------- Pied --------------------------------- */
+.pied {
+  border-top: 1px solid rgb(97 120 145 / 0.15);
+  padding: 1rem 1.5rem;
+}
+.pied p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+  color: var(--discret);
+  text-align: center;
+}
