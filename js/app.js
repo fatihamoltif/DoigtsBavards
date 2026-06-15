@@ -1,83 +1,111 @@
-/*
- * Point d'entrée : assemble la navigation et l'écran Conversation.
- *
- * Mode démo (développement) : ouvrir l'application avec `?demo=1` joue un
- * signeur simulé (sans caméra) pour vérifier visuellement la machine à états :
- * anneau de progression, validation unique par maintien, espace sur pause.
- */
+import { PipelineCamera }     from './pipeline.js';      // Géré par R1
+import { normaliserMain }     from './normalisation.js';  // Géré par R2
+import { chargerClassifieur } from './classifieur.js';    // Géré par R2
+import { MachineLettres }     from './reconnaissance.js'; // Géré par R2
+import { Navigation }         from './navigation.js';     // Géré par R4
+import { EcranConversation }  from './ui.js';            // TON FICHIER (R3)
+import { creerParole }        from './parole.js';         // TON FICHIER (R3)
 
-import { Navigation } from './navigation.js'
-import { EcranConversation } from './ui.js'
-import { ClassifieurMock } from './classifieur.js'
-import { CONFIG, ALPHABET, LETTRES_MOBILES } from './config.js'
-import { initialiserAccueil } from './accueil.js'
-
-initialiserAccueil()
-const conversation = new EcranConversation()
-
-new Navigation({
-  // Changer de section coupe la caméra : elle ne tourne jamais « dans le dos ».
-  surChangement: (section) => {
-    if (section !== 'conversation' && conversation.cameraActive) {
-      conversation.arreterCamera()
+document.addEventListener('DOMContentLoaded', async () => {
+  // 1. Initialisation de la navigation globale de R4
+  const navigation = new Navigation({
+    surChangement: (sectionId) => {
+      console.log(`Changement de section vers : ${sectionId}`);
     }
-  },
-})
+  });
 
-/* ----------------------- Grille du dictionnaire -------------------------- */
-// Les 26 lettres de la dactylologie ; les lettres à mouvement sont signalées.
-const grille = document.getElementById('grille-alphabet')
-for (const lettre of ALPHABET) {
-  const carte = document.createElement('figure')
-  carte.className = 'carte-lettre'
-  const grand = document.createElement('span')
-  grand.className = 'lettre-grande'
-  grand.textContent = lettre
-  carte.appendChild(grand)
-  if (LETTRES_MOBILES.has(lettre)) {
-    const badge = document.createElement('figcaption')
-    badge.className = 'badge-mouvement'
-    badge.textContent = 'avec mouvement'
-    carte.appendChild(badge)
+  // 2. Initialisation de ton interface et de la synthèse vocale (R3)
+  const ui = new EcranConversation();
+  const parole = creerParole();
+
+  // Détection du mode démo J1 (?demo=1)
+  const urlParams = new URLSearchParams(window.location.search);
+  const modeDemo = urlParams.get('demo') === '1';
+
+  if (modeDemo) {
+    lancerModeDemo(ui);
+    return;
   }
-  grille.appendChild(carte)
-}
 
-/* ------------------------------ Mode démo -------------------------------- */
-if (new URLSearchParams(location.search).get('demo') === '1') {
-  document.body.classList.add('mode-application')
-  document.getElementById('etat-camera').textContent = 'Mode démo'
+  // 3. Initialisation de la chaîne technique réelle (J2)
+  const pipeline = new PipelineCamera();
+  
+  const configurationSecours = {
+    SEUIL_HAUT: 0.85,
+    SEUIL_BAS: 0.50,
+    K_TRAMES: 12,
+    M_TRAMES: 12,
+    RELACHEMENT_TRAMES: 5,
+    TOLERANCE_TRAMES: 2,
+    DELAI_ESPACE_MS: 1200
+  };
 
-  // Un signeur simulé épelle « LSF », pause, puis « OK ».
-  const mock = new ClassifieurMock({ script: 'LSF' })
-  const mock2 = new ClassifieurMock({ script: 'OK' })
-  const vecteurFactice = new Float32Array(63)
-  let phase = 1
-  let tramesPause = 0
-  conversation.cameraActive = true
+  const machine = new MachineLettres(configurationSecours);
+  const classifieur = await chargerClassifieur(); 
 
-  const intervalle = setInterval(() => {
-    let prediction = null
-    let mainVisible = true
+  const videoElement = document.getElementById('video-camera');
+  const canvasElement = document.getElementById('canvas-squelette');
+  const btnCamera = document.getElementById('bouton-camera');
+  const voileCamera = document.getElementById('voile-camera');
+  const messageCamera = document.getElementById('message-camera');
+  const pastilleCamera = document.getElementById('pastille-camera');
 
-    if (phase === 1) {
-      prediction = mock.predire(vecteurFactice)
-      if (mock.terminee) phase = 2
-    } else if (phase === 2) {
-      // Pause volontaire (main baissée) → la machine insère une espace.
-      mainVisible = false
-      tramesPause += 1
-      if (tramesPause > Math.ceil(CONFIG.DELAI_ESPACE_MS / 33) + 10) phase = 3
-    } else if (phase === 3) {
-      prediction = mock2.predire(vecteurFactice)
-      if (mock2.terminee) phase = 4
+  if (btnCamera) {
+    btnCamera.addEventListener('click', async () => {
+      try {
+        if (messageCamera) messageCamera.textContent = ""; 
+        
+        await pipeline.demarrer(videoElement, canvasElement, (main) => {
+          const maintenant = performance.now();
+          
+          if (!main) {
+            const evenementVide = machine.pousser(null, maintenant); 
+            ui.majInterface(evenementVide);              
+            return;
+          }
+
+          const vecteur = normaliserMain(main.landmarks, main.lateralite);
+          if (vecteur !== null) {
+            const prediction = classifieur.predire(vecteur);            
+            const evenement = machine.pousser(prediction, maintenant);              
+            ui.majInterface(evenement); 
+          }
+        });
+
+        if (voileCamera) voileCamera.classList.add('cache');
+        if (pastilleCamera) pastilleCamera.classList.add('active');
+        const textEtat = document.getElementById('etat-camera');
+        if (textEtat) textEtat.textContent = "Active";
+
+      } catch (erreur) {
+        console.error("Échec du démarrage de la caméra :", erreur);
+        if (messageCamera) messageCamera.textContent = erreur.message;
+      }
+    });
+  }
+
+  const btnLire = document.getElementById('bouton-lire');
+  if (btnLire) {
+    btnLire.addEventListener('click', () => {
+      const zoneTexte = document.getElementById('texte-compose');
+      if (zoneTexte) {
+        const texte = zoneTexte.textContent.replace('⌫', '').trim();
+        parole.lire(texte);
+      }
+    });
+  }
+});
+
+function lancerModeDemo(ui) {
+  console.log("Mode démo activé");
+  let progressionSimulee = 0;
+  setInterval(() => {
+    progressionSimulee += 0.2;
+    if (progressionSimulee > 1) {
+      progressionSimulee = 0;
+      ui.majInterface({ etat: "verrouille", progression: 0, validation: { type: "lettre", lettre: "X" } });
     } else {
-      mainVisible = false
+      ui.majInterface({ etat: "confirmation", progression: progressionSimulee });
     }
-    if (prediction && prediction.confiance < 0.15) prediction = null
-
-    const resultat = conversation.machine.pousser(prediction, performance.now())
-    conversation.appliquerResultat(resultat, mainVisible)
-    if (phase === 4 && tramesPause > 200) clearInterval(intervalle)
-  }, 33) // ≈ 30 trames/seconde, comme la caméra
+  }, 250);
 }
