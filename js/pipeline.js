@@ -29,6 +29,7 @@ export class PipelineCamera {
     this.detecteur = null // HandLandmarker MediaPipe
     this.boucleActive = false
     this.idBoucle = null
+    this.latenceMs = 0.0 // moyenne mobile exponentielle de la latence
   }
 
   /** Charge le modèle MediaPipe (une seule fois). */
@@ -79,7 +80,9 @@ export class PipelineCamera {
           canvas.height = video.videoHeight
         }
 
-        const resultat = this.detecteur.detectForVideo(video, performance.now())
+        const t0 = performance.now()
+        const resultat = this.detecteur.detectForVideo(video, t0)
+        this.latenceMs = 0.8 * this.latenceMs + 0.2 * (performance.now() - t0)
         const landmarks = resultat.landmarks && resultat.landmarks[0]
 
         if (landmarks) {
