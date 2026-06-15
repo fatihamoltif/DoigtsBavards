@@ -1,13 +1,3 @@
-/*
- * Parole ↔ texte via la Web Speech API.
- *
- *   - Transcription (sens entendant → sourd·e) : SpeechRecognition.
- *     Note de transparence : sur la plupart des navigateurs, l'AUDIO du micro
- *     est traité par le service vocal du fournisseur du navigateur. Cela ne
- *     concerne jamais la vidéo, qui reste 100 % locale.
- *   - Synthèse (lecture du texte composé) : SpeechSynthesis, locale.
- */
-
 import { CONFIG } from './config.js'
 
 /* ----------------------------- Transcription ----------------------------- */
@@ -75,4 +65,16 @@ export function lireAVoixHaute(texte) {
   const enonce = new SpeechSynthesisUtterance(texte)
   enonce.lang = CONFIG.LANGUE
   window.speechSynthesis.speak(enonce)
+}
+
+export function creerParole() {
+  return {
+    lire(texte) {
+      if (!texte) return;
+      window.speechSynthesis.cancel();
+      const enonciation = new SpeechSynthesisUtterance(texte);
+      enonciation.lang = 'fr-FR';
+      window.speechSynthesis.speak(enonciation);
+    }
+  };
 }

@@ -1,9 +1,3 @@
-/*
- * Interface de l'écran Conversation : câble la caméra, la machine à états et
- * la zone de texte composé. Les zones « live » (vidéo, lettre courante, texte)
- * restent nettes et contrastées : les animations sont réservées au reste.
- */
-
 import { CONFIG } from './config.js'
 import { PipelineCamera } from './pipeline.js'
 import { normaliserMain } from './normalisation.js'

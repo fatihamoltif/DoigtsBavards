@@ -1,11 +1,3 @@
-/*
- * Point d'entrée : assemble la navigation et l'écran Conversation.
- *
- * Mode démo (développement) : ouvrir l'application avec `?demo=1` joue un
- * signeur simulé (sans caméra) pour vérifier visuellement la machine à états :
- * anneau de progression, validation unique par maintien, espace sur pause.
- */
-
 import { Navigation } from './navigation.js'
 import { EcranConversation } from './ui.js'
 import { ClassifieurMock } from './classifieur.js'
