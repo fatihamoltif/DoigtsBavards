@@ -1,0 +1,16 @@
+# Dépendances de dev éventuelles (l'app n'en a pas besoin pour tourner)
+node_modules
+
+# Python
+__pycache__
+*.pyc
+.venv
+
+# Vidéos d'entraînement : restent LOCALES, jamais versionnées (vie privée).
+entrainement/videos/
+# Jeu de données intermédiaire (régénérable depuis les vidéos).
+entrainement/donnees_landmarks.npz
+
+# Caches et systèmes
+.cache
+.DS_Store

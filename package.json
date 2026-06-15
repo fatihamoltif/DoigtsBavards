@@ -1,0 +1,10 @@
+{
+  "name": "epelle-lsf",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Épelle — reconnaissance de la dactylologie LSF, 100% local. App statique (HTML/CSS/JS pur), servie par 'python -m http.server'. Ce package.json ne sert qu'à l'outillage Node (tests de cohérence) : l'application n'a AUCUNE étape de build.",
+  "scripts": {
+    "test:coherence": "python3 entrainement/test_coherence.py"
+  }
+}

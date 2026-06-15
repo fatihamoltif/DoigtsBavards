@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+        content="Outil local d'aide à la communication entre personne sourde et personne entendante. Aucune vidéo ne quitte votre appareil." />
+  <title>Épelle — LSF ↔ Français</title>
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/composants.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+
+  <!-- ============ PAGE D'ACCUEIL — landing narrative (scroll) ============ -->
+  <section id="accueil" aria-label="Présentation">
+
+    <!-- 1. Hero : titre serif + mot qui s'épelle lettre par lettre. -->
+    <div class="hero">
+      <p class="eyebrow-tiret">Dactylologie LSF · 100 % local</p>
+      <h1 class="titre-hero">Épelle</h1>
+      <!-- Typo cinétique : le mot s'assemble lettre par lettre (aria-hidden,
+           le sens est porté par le pitch). -->
+      <p id="mot-epele" class="mot-epele" aria-hidden="true"></p>
+      <p class="pitch">
+        Épelez en LSF, l'application le lit à voix haute —
+        tout reste sur votre appareil.
+      </p>
+      <button class="bouton bouton-grand" data-action="ouvrir-app">
+        Entrer dans l'application <span aria-hidden="true">→</span>
+      </button>
+      <p class="indice-defilement" aria-hidden="true">défiler ↓</p>
+    </div>
+
+    <!-- 2. Le principe : trois temps, révélés au scroll. -->
+    <div class="section-accueil">
+      <p class="eyebrow-tiret reveal">Le principe</p>
+      <h2 class="titre-serif reveal">Une lettre à la fois,<br />un mot à la fin.</h2>
+
+      <ol class="temps-liste">
+        <li class="temps reveal">
+          <figure class="illustration" aria-hidden="true">
+            <svg class="main-squelette"></svg>
+          </figure>
+          <p class="eyebrow-tiret">Temps 1</p>
+          <h3>Vous signez une lettre</h3>
+          <p>Tenez la configuration de main face à la caméra, simplement,
+             quelques dixièmes de seconde.</p>
+        </li>
+        <li class="temps reveal">
+          <figure class="illustration" aria-hidden="true">
+            <svg class="main-squelette"></svg>
+            <span class="illustration-anneau"></span>
+            <span class="illustration-lettre">A</span>
+          </figure>
+          <p class="eyebrow-tiret">Temps 2</p>
+          <h3>L'app la reconnaît</h3>
+          <p>Un anneau se remplit pendant la confirmation. La lettre est
+             validée une seule fois — jamais en boucle.</p>
+        </li>
+        <li class="temps reveal">
+          <figure class="illustration illustration-mot" aria-hidden="true">
+            <span class="illustration-lettres">B&thinsp;O&thinsp;N</span>
+            <svg viewBox="0 0 24 24" class="illustration-son">
+              <path d="M11 5 6 9H2v6h4l5 4z" />
+              <path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14" fill="none" />
+            </svg>
+          </figure>
+          <p class="eyebrow-tiret">Temps 3</p>
+          <h3>Le mot se compose, puis se dit</h3>
+          <p>Lettre après lettre, le mot s'assemble à l'écran et peut être
+             lu à voix haute.</p>
+        </li>
+      </ol>
+    </div>
+
+    <!-- 3. Confidentialité : le différenciateur, mis en scène sur fond sombre. -->
+    <div class="section-accueil">
+      <div class="bloc-confidentialite reveal">
+        <div class="bloc-confidentialite-texte">
+          <p class="eyebrow-tiret eyebrow-sur-sombre">En toute confidentialité</p>
+          <h2 class="titre-serif">Rien ne quitte<br />votre appareil.</h2>
+          <ul class="liste-confidentialite">
+            <li>Aucune vidéo n'est enregistrée ni envoyée — nulle part.</li>
+            <li>La caméra ne sert qu'à extraire des <strong>coordonnées de
+                squelette</strong>, traitées en local.</li>
+            <li>Les modèles sont embarqués : l'application fonctionne
+                <strong>hors ligne</strong>.</li>
+          </ul>
+        </div>
+        <figure class="illustration illustration-sombre" aria-hidden="true">
+          <svg class="main-squelette"></svg>
+        </figure>
+      </div>
+    </div>
+
+    <!-- 4. Posture + 5. Entrée dans l'app. -->
+    <div class="section-accueil accueil-fin">
+      <p class="posture reveal">
+        Épelle est un <strong>outil d'aide à la communication</strong> entre une
+        personne sourde et une personne entendante — pas un remplacement
+        d'interprète.
+      </p>
+      <button class="bouton bouton-grand reveal" data-action="ouvrir-app">
+        Commencer <span aria-hidden="true">→</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================== APPLICATION ============================== -->
+  <div id="application">
+    <header class="entete">
+      <button id="lien-accueil" class="marque" aria-label="Retour à l'accueil">
+        <span class="logo">É</span>
+        <span class="marque-texte">Épelle <small>LSF ↔ Français</small></span>
+      </button>
+      <nav class="menu" aria-label="Sections">
+        <div class="onglets">
+          <button class="onglet actif" data-section="conversation" aria-current="page">Conversation</button>
+          <button class="onglet" data-section="dictionnaire" aria-current="false">Dictionnaire</button>
+          <button class="onglet" data-section="collecte" aria-current="false">Collecte</button>
+          <button class="onglet" data-section="corrections" aria-current="false">Corrections</button>
+          <span id="indicateur-onglet" aria-hidden="true"></span>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Piste horizontale : les sections glissent avec translateX. -->
+    <div class="fenetre-sections">
+      <div id="piste-sections" class="piste-sections">
+
+        <!-- ------------------------ CONVERSATION ------------------------- -->
+        <section class="panneau" id="section-conversation" aria-label="Conversation">
+          <div class="entete-section">
+            <p class="surtitre">Conversation</p>
+            <h2 class="titre-section">Communiquer dans les deux sens</h2>
+          </div>
+
+          <div class="colonnes">
+            <!-- Sourd·e → entendant : dactylologie -->
+            <article class="carte">
+              <div class="carte-entete">
+                <div>
+                  <p class="surtitre">Dactylologie</p>
+                  <h3>Sourd·e → entendant</h3>
+                  <p class="sous-titre">Épelez les lettres une à une devant la caméra</p>
+                </div>
+                <p class="indicateur-etat">
+                  <span id="pastille-camera" class="pastille"></span>
+                  <span id="etat-camera">En pause</span>
+                </p>
+              </div>
+
+              <!-- Zone live : vidéo + squelette. Nette, sans animation dessus. -->
+              <div class="scene-camera">
+                <video id="video-camera" playsinline muted></video>
+                <canvas id="canvas-squelette"></canvas>
+                <button id="bouton-couper" class="bouton bouton-fort bouton-couper" hidden>
+                  Couper la caméra
+                </button>
+                <div id="voile-camera" class="voile-camera">
+                  <p>La caméra ne sert qu'à extraire des coordonnées de squelette,
+                     en local. Aucune image n'est enregistrée ni envoyée.</p>
+                  <button id="bouton-camera" class="bouton">Activer la caméra</button>
+                  <p id="message-camera" class="message-erreur" role="status"></p>
+                </div>
+              </div>
+
+              <!-- Lettre candidate + anneau de progression. -->
+              <div class="zone-lettre">
+                <div class="cercle-lettre">
+                  <svg viewBox="0 0 60 60" aria-hidden="true">
+                    <circle class="anneau-fond" cx="30" cy="30" r="26" />
+                    <circle id="anneau-progression" class="anneau" cx="30" cy="30" r="26" />
+                  </svg>
+                  <span id="lettre-candidate" class="lettre-candidate discrete" aria-hidden="true">·</span>
+                </div>
+                <div class="zone-lettre-textes">
+                  <p class="etiquette">Lettre courante</p>
+                  <p id="etat-lettre" class="sous-titre" role="status">Caméra coupée</p>
+                </div>
+              </div>
+
+              <!-- Texte composé. -->
+              <div class="zone-texte">
+                <p class="etiquette">Texte composé</p>
+                <p id="texte-compose" class="texte-compose" aria-live="polite"><span
+                   id="curseur-texte" class="curseur" aria-hidden="true"></span></p>
+              </div>
+
+              <div class="rangee-boutons">
+                <button id="bouton-effacer" class="bouton bouton-contour" disabled>⌫ Effacer</button>
+                <button id="bouton-tout-effacer" class="bouton bouton-contour" disabled>Tout effacer</button>
+                <button id="bouton-lire" class="bouton" disabled>Lire à voix haute</button>
+              </div>
+
+              <!-- Réglages de la validation (repliés par défaut). -->
+              <details class="reglages">
+                <summary>Réglages de la reconnaissance</summary>
+                <div class="grille-reglages">
+                  <label>Seuil de validation
+                    <input id="reglage-seuil-haut" type="range" min="0.6" max="0.95" step="0.05" value="0.85" />
+                    <span id="valeur-seuil-haut">85 %</span>
+                  </label>
+                  <label>Seuil de relâchement
+                    <input id="reglage-seuil-bas" type="range" min="0.2" max="0.6" step="0.05" value="0.5" />
+                    <span id="valeur-seuil-bas">50 %</span>
+                  </label>
+                  <label>Maintien requis
+                    <input id="reglage-k" type="range" min="6" max="24" step="1" value="12" />
+                    <span id="valeur-k">12 trames</span>
+                  </label>
+                  <label>Pause pour une espace
+                    <input id="reglage-espace" type="range" min="600" max="2500" step="100" value="1200" />
+                    <span id="valeur-espace">1,2 s</span>
+                  </label>
+                </div>
+              </details>
+            </article>
+
+            <!-- Entendant → sourd·e : transcription -->
+            <article class="carte">
+              <div class="carte-entete">
+                <div>
+                  <p class="surtitre">Transcription</p>
+                  <h3>Entendant → sourd·e</h3>
+                  <p class="sous-titre">La parole devient du texte, en direct</p>
+                </div>
+                <p class="indicateur-etat">
+                  <span id="pastille-micro" class="pastille"></span>
+                  <span id="etat-micro">Micro coupé</span>
+                </p>
+              </div>
+
+              <div id="flux-transcription" class="flux-transcription">
+                <p id="placeholder-transcription" class="placeholder">
+                  Activez le micro et parlez : le texte s'affichera ici.
+                </p>
+                <p id="ligne-interim" class="ligne-interim"></p>
+              </div>
+
+              <div class="rangee-boutons">
+                <button id="bouton-micro" class="bouton">Activer le micro</button>
+              </div>
+
+              <p class="note">
+                L'audio du micro peut être traité par le service vocal du
+                navigateur. La vidéo, elle, ne quitte jamais l'appareil.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <!-- ------------------------ DICTIONNAIRE ------------------------- -->
+        <section class="panneau" id="section-dictionnaire" aria-label="Dictionnaire">
+          <div class="entete-section">
+            <p class="surtitre">Dictionnaire</p>
+            <h2 class="titre-section">L'alphabet dactylologique</h2>
+            <p class="sous-titre">
+              Les 26 lettres. La plupart sont des configurations de main
+              statiques ; les lettres signalées comportent un mouvement.
+            </p>
+          </div>
+          <div id="grille-alphabet" class="grille-alphabet"></div>
+        </section>
+
+        <!-- -------------------------- COLLECTE --------------------------- -->
+        <section class="panneau" id="section-collecte" aria-label="Collecte">
+          <div class="entete-section">
+            <p class="surtitre">Collecte</p>
+            <h2 class="titre-section">Enregistrer des exemples</h2>
+            <p class="sous-titre">
+              Capturer des trames de landmarks par lettre et par signeur, pour
+              entraîner le modèle (script Python). Aucun pixel conservé.
+            </p>
+          </div>
+          <article class="carte carte-a-venir">
+            <h3>Prochaine étape</h3>
+            <p>Choix de la lettre, identifiant signeur obligatoire, capture
+               d'exemples variés (angles, distances), export JSON vers
+               <code>entrainement/</code>.</p>
+          </article>
+        </section>
+
+        <!-- ------------------------ CORRECTIONS -------------------------- -->
+        <section class="panneau" id="section-corrections" aria-label="Corrections">
+          <div class="entete-section">
+            <p class="surtitre">Corrections</p>
+            <h2 class="titre-section">Apprendre de ses erreurs</h2>
+            <p class="sous-titre">
+              Quand une lettre est mal reconnue, la corriger enrichit les
+              données locales d'entraînement.
+            </p>
+          </div>
+          <article class="carte carte-a-venir">
+            <h3>Prochaine étape</h3>
+            <p>Correction d'une lettre validée à tort, liste des corrections,
+               export JSON pour le réentraînement.</p>
+          </article>
+        </section>
+
+      </div>
+    </div>
+
+    <footer class="pied">
+      <p>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+        </svg>
+        Aucune vidéo ne quitte votre appareil — seules des coordonnées de
+        squelette sont traitées, en local.
+      </p>
+    </footer>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
