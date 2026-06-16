@@ -2,6 +2,7 @@
 node_modules
 
 # Python
+.vscode/
 __pycache__
 *.pyc
 .venv
