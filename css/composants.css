@@ -125,13 +125,150 @@
 }
 
 .titre-section {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-family: var(--sans);
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.02em;
   margin: 0.3rem 0 0.4rem;
   color: var(--encre);
+}
+
+/* ======================= GRILLE 3 CUBES (Conversation) ================ */
+.grille-cubes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  max-width: 1400px;
+}
+@media (max-width: 1100px) {
+  .grille-cubes {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 700px) {
+  .grille-cubes {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- Cube individuel --- */
+.cube {
+  background: var(--accent);           /* Mint */
+  border: none;
+  border-radius: 24px;
+  padding: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  color: var(--encre);                 /* Midnight */
+  box-shadow: 0 8px 32px rgba(15, 70, 76, 0.10);
+  position: relative;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.cube:hover {
+  box-shadow: 0 12px 40px rgba(15, 70, 76, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Cube central légèrement différencié */
+.cube-centre {
+  background: #daeee9;                 /* Mint plus clair pour le centre */
+}
+
+/* Topbar du cube : titre + bouton plein écran */
+.cube-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.cube-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.cube-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(15, 70, 76, 0.6);
+  margin-bottom: 0.15rem;
+}
+
+.cube-titre {
+  font-family: var(--sans);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--encre);
+  line-height: 1.2;
+}
+
+.cube-sous-titre {
+  font-size: 0.85rem;
+  color: rgba(15, 70, 76, 0.65);
+  margin-top: -0.6rem;
+}
+
+/* --- Bouton plein écran --- */
+.bouton-pleinecran {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(15, 70, 76, 0.1);
+  color: var(--encre);
+  transition: background 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+.bouton-pleinecran svg {
+  width: 16px;
+  height: 16px;
+}
+.bouton-pleinecran:hover {
+  background: rgba(15, 70, 76, 0.2);
+  transform: scale(1.1);
+}
+
+/* --- État plein écran d'un cube --- */
+.cube.pleinecran {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  border-radius: 0;
+  padding: 2rem clamp(1.5rem, 5vw, 4rem);
+  max-height: 100vh;
+  overflow-y: auto;
+  box-shadow: none;
+  transform: none;
+}
+.cube.pleinecran:hover {
+  transform: none;
+}
+
+/* Overlay sombre derrière le cube en plein écran */
+.overlay-pleinecran {
+  display: none;
+}
+.overlay-pleinecran.actif {
+  display: block;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 70, 76, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 99;
+}
+
+/* Icône de réduction quand plein écran actif */
+.cube.pleinecran .bouton-pleinecran svg {
+  transform: rotate(180deg);
 }
 
 /* --------------------------------- Cartes -------------------------------- */
@@ -148,24 +285,24 @@
 }
 
 .carte {
-  background: var(--blanc);
-  border: 1px solid rgba(0, 70, 67, 0.12);
+  background: var(--accent);
+  border: none;
   border-radius: var(--rayon-grand);
   padding: 1.8rem;
   display: flex;
   flex-direction: column;
   gap: 1.4rem;
-  box-shadow: 0 4px 20px rgba(0, 70, 67, 0.04);
+  box-shadow: 0 4px 20px rgba(15, 70, 76, 0.08);
 }
 
 .carte h3 {
-  font-family: var(--serif);
-  font-size: 1.6rem;
+  font-family: var(--sans);
+  font-size: 1.4rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: -0.01em;
   color: var(--encre);
 }
+
 
 .carte-entete {
   display: flex;
