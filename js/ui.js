@@ -114,8 +114,8 @@ export class EcranConversation {
     if (main) {
       const vecteur = normaliserMain(main.landmarks, main.lateralite)
       if (vecteur) {
-        this.dernierVecteur = vecteur
         prediction = this.classifieur.predire(vecteur)
+        console.log(`[KNN Debug] Prédit : "${prediction.lettre}" | Confiance : ${Math.round(prediction.confiance * 100)}%`)
       }
     }
     const resultat = this.machine.pousser(prediction, performance.now())
