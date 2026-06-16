@@ -104,30 +104,31 @@ export class ClassifieurKNN {
     }
   }
 
-  predire(vecteur) {
-    // Plus proche voisin : distance euclidienne au carré (pas besoin de racine).
-    let meilleur = null
-    let deuxieme = Infinity
-    let distanceMin = Infinity
+predire(vecteur) {
+    // Pour CHAQUE lettre, on garde la distance a son prototype le plus proche.
+    const distanceParLettre = {}
     for (const proto of this.prototypes) {
       let d = 0
       for (let i = 0; i < 63; i++) {
         const ecart = vecteur[i] - proto.vecteur[i]
         d += ecart * ecart
       }
-      if (d < distanceMin) {
-        deuxieme = distanceMin
-        distanceMin = d
-        meilleur = proto.lettre
-      } else if (d < deuxieme) {
-        deuxieme = d
+      const actuelle = distanceParLettre[proto.lettre]
+      if (actuelle === undefined || d < actuelle) {
+        distanceParLettre[proto.lettre] = d
       }
     }
-    if (!meilleur) return { lettre: '?', confiance: 0 }
-    // Confiance : marge relative entre le 1er et le 2e voisin (0 → ambigu,
-    // 1 → sans ambiguïté). Simple et honnête.
-    const confiance = deuxieme === Infinity ? 1 : 1 - distanceMin / deuxieme
-    return { lettre: meilleur, confiance }
+
+    // Classer les lettres, de la plus proche a la plus lointaine.
+    const classees = Object.entries(distanceParLettre).sort((a, b) => a[1] - b[1])
+    if (classees.length === 0) return { lettre: '?', confiance: 0 }
+
+    const [lettre, d1] = classees[0]                            // meilleure lettre
+    const d2 = classees.length > 1 ? classees[1][1] : Infinity  // 2e meilleure lettre
+
+    // Marge entre la meilleure lettre et la 2e : 0 = ambigu, 1 = net.
+    const confiance = d2 === Infinity ? 1 : 1 - d1 / d2
+    return { lettre, confiance }
   }
 }
 
