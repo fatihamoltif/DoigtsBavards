@@ -28,7 +28,7 @@ Usage :
   python entrainement/entrainement.py                 # défauts raisonnables
   python entrainement/entrainement.py --prototypes 5 --jitter 2 --miroir
 """
-
+# Pipeline VIDÉO (.mp4 → .npz → modèle, avec éval/LOSO). Nécessite entrainement/videos/.
 import argparse
 import json
 import os

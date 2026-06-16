@@ -104,40 +104,31 @@ export class ClassifieurKNN {
     }
   }
 
-  predire(vecteur) {
-    // 1. Trouver la plus petite distance pour chaque lettre
-    const minParLettre = {}
+predire(vecteur) {
+    // Pour CHAQUE lettre, on garde la distance a son prototype le plus proche.
+    const distanceParLettre = {}
     for (const proto of this.prototypes) {
       let d = 0
       for (let i = 0; i < 63; i++) {
         const ecart = vecteur[i] - proto.vecteur[i]
         d += ecart * ecart
       }
-      if (minParLettre[proto.lettre] === undefined || d < minParLettre[proto.lettre]) {
-        minParLettre[proto.lettre] = d
+      const actuelle = distanceParLettre[proto.lettre]
+      if (actuelle === undefined || d < actuelle) {
+        distanceParLettre[proto.lettre] = d
       }
     }
 
-    // 2. Trouver la meilleure lettre (distanceMin) et la meilleure concurrente (deuxieme)
-    let meilleur = null
-    let distanceMin = Infinity
-    let deuxieme = Infinity
+    // Classer les lettres, de la plus proche a la plus lointaine.
+    const classees = Object.entries(distanceParLettre).sort((a, b) => a[1] - b[1])
+    if (classees.length === 0) return { lettre: '?', confiance: 0 }
 
-    for (const [lettre, d] of Object.entries(minParLettre)) {
-      if (d < distanceMin) {
-        deuxieme = distanceMin
-        distanceMin = d
-        meilleur = lettre
-      } else if (d < deuxieme) {
-        deuxieme = d
-      }
-    }
+    const [lettre, d1] = classees[0]                            // meilleure lettre
+    const d2 = classees.length > 1 ? classees[1][1] : Infinity  // 2e meilleure lettre
 
-    if (!meilleur) return { lettre: '?', confiance: 0 }
-    // Confiance : marge relative entre le 1er et le 2e voisin concurrent (0 → ambigu,
-    // 1 → sans ambiguïté).
-    const confiance = deuxieme === Infinity ? 1 : 1 - distanceMin / deuxieme
-    return { lettre: meilleur, confiance }
+    // Marge entre la meilleure lettre et la 2e : 0 = ambigu, 1 = net.
+    const confiance = d2 === Infinity ? 1 : 1 - d1 / d2
+    return { lettre, confiance }
   }
 }
 

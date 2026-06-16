@@ -1,36 +1,36 @@
-import json
-import glob
-import os
+# (Ancien) entraîneur JSON, remplacé par entraine_collecte.py.
+import json, glob, os
 
-# Se déplacer dans le dossier contenant les fichiers JSON (dossier entrainement)
 ICI = os.path.dirname(os.path.abspath(__file__))
 
-# 1. Charger et regrouper les exports de la Collecte
+# tous les .json du dossier, SAUF les fixtures du test de coherence
+chemins = [c for c in glob.glob(os.path.join(ICI, '*.json'))
+           if not c.endswith('fixtures_landmarks.json')]
+
 prototypes = {}
-chemins_json = glob.glob(os.path.join(ICI, '*.json'))
 
-# Exclure fixtures_landmarks.json du modèle d'entraînement
-chemins_json = [c for c in chemins_json if not c.endswith('fixtures_landmarks.json')]
+def ajouter(entree):
+    lettre = entree['lettre']
+    if 'trames' in entree:                 # format Collecte : plusieurs trames
+        for vecteur in entree['trames']:
+            prototypes.setdefault(lettre, []).append(vecteur)
+    elif 'vecteur' in entree:              # format liste plate : un vecteur
+        prototypes.setdefault(lettre, []).append(entree['vecteur'])
 
-for chemin in chemins_json:
+for chemin in chemins:
     with open(chemin, encoding='utf-8') as f:
-        data = json.load(f)
-        if isinstance(data, dict) and 'lettre' in data and 'trames' in data:
-            lettre = data['lettre']
-            trames = data['trames']
-            prototypes.setdefault(lettre, []).extend(trames)
+        donnees = json.load(f)
+    if isinstance(donnees, list):          # fichier = liste d'objets
+        for e in donnees:
+            ajouter(e)
+    else:                                  # fichier = un seul objet
+        ajouter(donnees)
 
-# 3. Exporter au format lu par le JS
-modele = {
-    'type': 'knn',
-    'prototypes': prototypes
-}
+modele = {'type': 'knn', 'prototypes': prototypes}
 
-chemin_sortie = os.path.join(os.path.dirname(ICI), 'modeles', 'modele-lettres.json')
-# Créer le dossier parent s'il n'existe pas
-os.makedirs(os.path.dirname(chemin_sortie), exist_ok=True)
+sortie = os.path.join(os.path.dirname(ICI), 'modeles', 'modele-lettres.json')
+os.makedirs(os.path.dirname(sortie), exist_ok=True)
+with open(sortie, 'w', encoding='utf-8') as f:
+    json.dump(modele, f, ensure_ascii=False)
 
-with open(chemin_sortie, 'w', encoding='utf-8') as f:
-    json.dump(modele, f, ensure_ascii=False, indent=2)
-
-print('Modèle écrit :', {l: len(v) for l, v in prototypes.items()})
+print('Modele ecrit :', {l: len(v) for l, v in prototypes.items()})

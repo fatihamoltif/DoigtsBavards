@@ -26,7 +26,7 @@ const BASE_AURICULAIRE = 17
  * l'inférence ne parlent pas le même langage → on refuse le modèle plutôt
  * que de prédire n'importe quoi. À incrémenter si on change la normalisation.
  */
-export const VERSION_NORMALISATION = 'main-63d-v1'
+export const VERSION_NORMALISATION = 'main-63d-v2'
 
 // Petites fonctions de calcul vectoriel 3D (lisibles, sans bibliothèque).
 function soustraire(a, b) {
@@ -79,9 +79,9 @@ export function normaliserMain(landmarks, lateralite = 'Right') {
   const vecteur = new Float32Array(63)
   for (let i = 0; i < 21; i++) {
     const relatif = soustraire(landmarks[i], poignet)
-    vecteur[i * 3] = (produitScalaire(relatif, axeX) / echelle) * miroir
+    vecteur[i * 3] = (produitScalaire(relatif, axeX) / echelle) 
     vecteur[i * 3 + 1] = produitScalaire(relatif, axeY) / echelle
-    vecteur[i * 3 + 2] = produitScalaire(relatif, axeZ) / echelle
+    vecteur[i * 3 + 2] = produitScalaire(relatif, axeZ) / echelle* miroir
   }
   return vecteur
 }
