@@ -16,7 +16,7 @@
  */
 
 import { ALPHABET } from './config.js'
-
+import { VERSION_NORMALISATION } from './normalisation.js' 
 /* ------------------------------ 1. Le mock ------------------------------- */
 
 export class ClassifieurMock {
@@ -184,6 +184,11 @@ export async function chargerClassifieur() {
     const reponse = await fetch('modeles/modele-lettres.json')
     if (reponse.ok) {
       const modele = await reponse.json()
+      // Garde-fou : refuser un modèle normalisé avec une autre convention.
+      if (modele.version_normalisation && modele.version_normalisation !== VERSION_NORMALISATION) {
+        console.warn(`Modèle en ${modele.version_normalisation}, code en ${VERSION_NORMALISATION} → ignoré.`)
+        return new ClassifieurMock()
+      }
       if (modele.type === 'knn') return new ClassifieurKNN(modele)
       if (modele.type === 'mlp') return new ClassifieurMLP(modele)
     }
