@@ -12,6 +12,7 @@ const conversation = new EcranConversation()
 const collecte = new EcranCollecte()
 const corrections = new ManagerCorrections()
 
+
 // Lier la validation de lettre dans la Conversation à la liste de Corrections
 conversation.surValidationLettre = (lettre, vecteur) => {
   corrections.ajouterSaisie(lettre, vecteur)

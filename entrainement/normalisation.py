@@ -9,7 +9,7 @@ Trois opérations, identiques au JS :
   1. TRANSLATION : origine sur le POIGNET (point 0) ;
   2. ÉCHELLE     : division par la distance poignet → base du majeur (point 9) ;
   3. ROTATION    : projection dans un repère attaché à la main
-                   (axe Y = poignet→majeur, axe Z = normale de la paume).
+   a                (axe Y = poignet→majeur, axe Z = normale de la paume).
 En plus : les mains GAUCHES sont miroitées sur les droites (axe X inversé).
 
 On reste en Python pur (pas de numpy) pour effectuer EXACTEMENT les mêmes
@@ -21,7 +21,7 @@ import math
 import struct
 
 # Doit être STRICTEMENT identique à VERSION_NORMALISATION dans js/normalisation.js.
-VERSION_NORMALISATION = "main-63d-v1"
+VERSION_NORMALISATION = "main-63d-v2"
 
 POIGNET = 0
 BASE_MAJEUR = 9
@@ -89,15 +89,16 @@ def normaliser_main(landmarks, lateralite="Right"):
     if _longueur(axe_z) < 1e-6:
         return None
 
-    # Miroir gauche → droite : on inverse l'axe X.
+    # Miroir gauche → droite : on inverse l'axe Z
+    # Miroir gauche → droite : on inverse l'axe Z (normale de la paume).
     miroir = -1.0 if lateralite == "Left" else 1.0
 
     vecteur = [0.0] * 63
     for i in range(21):
         relatif = _soustraire(pts[i], poignet)
-        vecteur[i * 3] = _en_float32((_produit_scalaire(relatif, axe_x) / echelle) * miroir)
+        vecteur[i * 3]     = _en_float32(_produit_scalaire(relatif, axe_x) / echelle)
         vecteur[i * 3 + 1] = _en_float32(_produit_scalaire(relatif, axe_y) / echelle)
-        vecteur[i * 3 + 2] = _en_float32(_produit_scalaire(relatif, axe_z) / echelle)
+        vecteur[i * 3 + 2] = _en_float32((_produit_scalaire(relatif, axe_z) / echelle) * miroir)
     return vecteur
 
 
