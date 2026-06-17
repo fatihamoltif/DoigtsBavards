@@ -136,22 +136,29 @@
             <h2 class="titre-section">Communiquer dans les deux sens</h2>
           </div>
 
-          <div class="colonnes">
-            <!-- Sourd·e → entendant : dactylologie -->
-            <article class="carte">
-              <div class="carte-entete">
+          <div class="grille-cubes">
+
+            <!-- CUBE 1 : Dactylologie (Sourd·e → Entendant) -->
+            <article class="cube" id="cube-dactylo">
+              <div class="cube-topbar">
                 <div>
-                  <p class="surtitre">Dactylologie</p>
-                  <h3>Sourd·e → entendant</h3>
-                  <p class="sous-titre">Épelez les lettres une à une devant la caméra</p>
+                  <p class="cube-label">Dactylologie</p>
+                  <h3 class="cube-titre">Sourd·e → Entendant</h3>
                 </div>
-                <p class="indicateur-etat">
-                  <span id="pastille-camera" class="pastille"></span>
-                  <span id="etat-camera">En pause</span>
-                </p>
+                <div class="cube-actions">
+                  <p class="indicateur-etat">
+                    <span id="pastille-camera" class="pastille"></span>
+                    <span id="etat-camera">En pause</span>
+                  </p>
+                  <button class="bouton-pleinecran" data-cube="cube-dactylo" title="Plein écran" aria-label="Plein écran">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                  </button>
+                </div>
               </div>
 
-              <!-- Zone live : vidéo + squelette. Nette, sans animation dessus. -->
+              <p class="cube-sous-titre">Épelez les lettres une à une devant la caméra</p>
+
+              <!-- Zone live : vidéo + squelette -->
               <div class="scene-camera">
                 <video id="video-camera" playsinline muted></video>
                 <canvas id="canvas-squelette"></canvas>
@@ -166,35 +173,7 @@
                 </div>
               </div>
 
-              <!-- Lettre candidate + anneau de progression. -->
-              <div class="zone-lettre">
-                <div class="cercle-lettre">
-                  <svg viewBox="0 0 60 60" aria-hidden="true">
-                    <circle class="anneau-fond" cx="30" cy="30" r="26" />
-                    <circle id="anneau-progression" class="anneau" cx="30" cy="30" r="26" />
-                  </svg>
-                  <span id="lettre-candidate" class="lettre-candidate discrete" aria-hidden="true">·</span>
-                </div>
-                <div class="zone-lettre-textes">
-                  <p class="etiquette">Lettre courante</p>
-                  <p id="etat-lettre" class="sous-titre" role="status">Caméra coupée</p>
-                </div>
-              </div>
-
-              <!-- Texte composé. -->
-              <div class="zone-texte">
-                <p class="etiquette">Texte composé</p>
-                <p id="texte-compose" class="texte-compose" aria-live="polite"><span
-                   id="curseur-texte" class="curseur" aria-hidden="true"></span></p>
-              </div>
-
-              <div class="rangee-boutons">
-                <button id="bouton-effacer" class="bouton bouton-contour" disabled>⌫ Effacer</button>
-                <button id="bouton-tout-effacer" class="bouton bouton-contour" disabled>Tout effacer</button>
-                <button id="bouton-lire" class="bouton" disabled>Lire à voix haute</button>
-              </div>
-
-              <!-- Réglages de la validation (repliés par défaut). -->
+              <!-- Réglages -->
               <details class="reglages">
                 <summary>Réglages de la reconnaissance</summary>
                 <div class="grille-reglages">
@@ -218,19 +197,66 @@
               </details>
             </article>
 
-            <!-- Entendant → sourd·e : transcription -->
-            <article class="carte">
-              <div class="carte-entete">
+            <!-- CUBE 2 : Lettre + Texte composé (centre) -->
+            <article class="cube cube-centre" id="cube-texte">
+              <div class="cube-topbar">
                 <div>
-                  <p class="surtitre">Transcription</p>
-                  <h3>Entendant → sourd·e</h3>
-                  <p class="sous-titre">La parole devient du texte, en direct</p>
+                  <p class="cube-label">Composition</p>
+                  <h3 class="cube-titre">Texte en cours</h3>
                 </div>
-                <p class="indicateur-etat">
-                  <span id="pastille-micro" class="pastille"></span>
-                  <span id="etat-micro">Micro coupé</span>
-                </p>
+                <button class="bouton-pleinecran" data-cube="cube-texte" title="Plein écran" aria-label="Plein écran">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                </button>
               </div>
+
+              <!-- Lettre candidate + anneau -->
+              <div class="zone-lettre">
+                <div class="cercle-lettre">
+                  <svg viewBox="0 0 60 60" aria-hidden="true">
+                    <circle class="anneau-fond" cx="30" cy="30" r="26" />
+                    <circle id="anneau-progression" class="anneau" cx="30" cy="30" r="26" />
+                  </svg>
+                  <span id="lettre-candidate" class="lettre-candidate discrete" aria-hidden="true">·</span>
+                </div>
+                <div class="zone-lettre-textes">
+                  <p class="etiquette">Lettre courante</p>
+                  <p id="etat-lettre" class="sous-titre" role="status">Caméra coupée</p>
+                </div>
+              </div>
+
+              <!-- Texte composé -->
+              <div class="zone-texte">
+                <p class="etiquette">Texte composé</p>
+                <p id="texte-compose" class="texte-compose" aria-live="polite"><span
+                   id="curseur-texte" class="curseur" aria-hidden="true"></span></p>
+              </div>
+
+              <div class="rangee-boutons">
+                <button id="bouton-effacer" class="bouton bouton-contour" disabled>⌫ Effacer</button>
+                <button id="bouton-tout-effacer" class="bouton bouton-contour" disabled>Tout effacer</button>
+                <button id="bouton-lire" class="bouton" disabled>Lire à voix haute</button>
+              </div>
+            </article>
+
+            <!-- CUBE 3 : Transcription (Entendant → Sourd·e) -->
+            <article class="cube" id="cube-transcription">
+              <div class="cube-topbar">
+                <div>
+                  <p class="cube-label">Transcription</p>
+                  <h3 class="cube-titre">Entendant → Sourd·e</h3>
+                </div>
+                <div class="cube-actions">
+                  <p class="indicateur-etat">
+                    <span id="pastille-micro" class="pastille"></span>
+                    <span id="etat-micro">Micro coupé</span>
+                  </p>
+                  <button class="bouton-pleinecran" data-cube="cube-transcription" title="Plein écran" aria-label="Plein écran">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <p class="cube-sous-titre">La parole devient du texte, en direct</p>
 
               <div id="flux-transcription" class="flux-transcription">
                 <p id="placeholder-transcription" class="placeholder">
@@ -248,10 +274,12 @@
                 navigateur. La vidéo, elle, ne quitte jamais l'appareil.
               </p>
             </article>
-          </div>
+
+          </div><!-- /.grille-cubes -->
         </section>
 
         <!-- ------------------------ DICTIONNAIRE ------------------------- -->
+
         <section class="panneau" id="section-dictionnaire" aria-label="Dictionnaire">
           <div class="entete-section">
             <p class="surtitre">Dictionnaire</p>
@@ -446,6 +474,51 @@
     </footer>
   </div>
 
+  <!-- Overlay pour le mode plein écran des cubes -->
+  <div id="overlay-pleinecran" class="overlay-pleinecran"></div>
+
   <script type="module" src="js/app.js"></script>
+  <script>
+    // Plein écran des cubes conversation
+    document.addEventListener('DOMContentLoaded', () => {
+      const overlay = document.getElementById('overlay-pleinecran')
+      let cubeActif = null
+
+      function ouvrirPleinEcran(cube) {
+        if (cubeActif) fermerPleinEcran()
+        cubeActif = cube
+        cube.classList.add('pleinecran')
+        overlay.classList.add('actif')
+        document.body.style.overflow = 'hidden'
+      }
+
+      function fermerPleinEcran() {
+        if (!cubeActif) return
+        cubeActif.classList.remove('pleinecran')
+        overlay.classList.remove('actif')
+        document.body.style.overflow = ''
+        cubeActif = null
+      }
+
+      document.querySelectorAll('.bouton-pleinecran').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation()
+          const cube = document.getElementById(btn.dataset.cube)
+          if (!cube) return
+          if (cube.classList.contains('pleinecran')) {
+            fermerPleinEcran()
+          } else {
+            ouvrirPleinEcran(cube)
+          }
+        })
+      })
+
+      overlay.addEventListener('click', fermerPleinEcran)
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') fermerPleinEcran()
+      })
+    })
+  </script>
 </body>
 </html>
