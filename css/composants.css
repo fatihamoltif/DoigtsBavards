@@ -16,7 +16,7 @@
   background: var(--encre);
   color: var(--papier);
   padding: 1.1rem 2rem;
-  box-shadow: 0 4px 20px rgba(0, 70, 67, 0.15);
+  box-shadow: 0 4px 20px rgba(34, 54, 98, 0.15);
 }
 
 .marque {
@@ -39,6 +39,15 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
+.logo-marque {
+  height: 2.4rem;
+  width: auto;
+  display: block;
+  padding: 0.35rem 0.5rem; /* cadre lavande, façon badge */
+  background: var(--accent);
+  border-radius: 12px;
+}
+
 .marque-texte {
   font-family: var(--serif);
   font-weight: 700;
@@ -52,7 +61,7 @@
   font-family: var(--sans);
   font-weight: 500;
   font-size: 0.75rem;
-  color: rgba(171, 209, 198, 0.7);
+  color: rgba(185, 165, 210, 0.7);
   letter-spacing: 0.05em;
   text-transform: none;
 }
@@ -62,7 +71,7 @@
   position: relative;
   display: flex;
   gap: 0.4rem;
-  background: rgba(0, 35, 34, 0.35);
+  background: rgba(38, 24, 52, 0.35);
   padding: 0.3rem;
   border-radius: 999px;
 }
@@ -76,7 +85,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(240, 247, 245, 0.65);
+  color: rgba(243, 238, 247, 0.65);
   transition: color 0.25s ease;
 }
 .onglet:hover {
@@ -100,6 +109,8 @@
 /* --------------------------- Piste de sections ---------------------------- */
 .fenetre-sections {
   overflow: hidden;
+  /* Hauteur calée sur le panneau actif par js/navigation.js (ajusterHauteur). */
+  transition: height var(--duree) var(--ressort);
 }
 
 .piste-sections {
@@ -113,25 +124,32 @@
   padding: 3rem clamp(1.25rem, 4vw, 3rem) 4rem;
 }
 
-/* Largeur de lecture confortable, sans casser la piste glissante. */
-.entete-section,
-.colonnes,
-.grille-alphabet {
+/* Seuls les en-têtes de section gardent une largeur de lecture confortable.
+   Les contenus (colonnes, grille de l'alphabet, transcription) prennent toute
+   la largeur du panneau. */
+.entete-section {
   max-width: 1150px;
 }
 
 .entete-section {
   margin-bottom: 2rem;
+  text-align: center;
+  margin-inline: auto;
+}
+/* Description centrée mais limitée en longueur pour rester lisible. */
+.entete-section .sous-titre {
+  max-width: 60ch;
+  margin-inline: auto;
 }
 
 .titre-section {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  margin: 0.3rem 0 0.4rem;
-  color: var(--encre);
+  font-family: var(--cursive);
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  font-weight: 400; /* Cedarville Cursive n'a que le 400 */
+  letter-spacing: 0;
+  line-height: 1.15;
+  margin: 0.3rem 0 0.5rem;
+  color: var(--vif);
 }
 
 /* --------------------------------- Cartes -------------------------------- */
@@ -147,15 +165,35 @@
   }
 }
 
+/* Transcription : bloc pleine largeur sous la rangée dactylo + réglages,
+   aligné sur la même largeur que .colonnes. */
+.carte-transcription {
+  margin-top: 2rem;
+}
+
+/* Conversation : haut en 3 colonnes (caméra+lettre | texte composé | réglages).
+   La caméra reçoit un peu plus de place ; les curseurs passent en 1 colonne. */
+.colonnes-conv {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.colonnes-conv .grille-reglages {
+  grid-template-columns: 1fr;
+}
+@media (max-width: 900px) {
+  .colonnes-conv {
+    grid-template-columns: 1fr;
+  }
+}
+
 .carte {
   background: var(--blanc);
-  border: 1px solid rgba(0, 70, 67, 0.12);
+  border: 1px solid rgba(34, 54, 98, 0.12);
   border-radius: var(--rayon-grand);
   padding: 1.8rem;
   display: flex;
   flex-direction: column;
   gap: 1.4rem;
-  box-shadow: 0 4px 20px rgba(0, 70, 67, 0.04);
+  box-shadow: 0 4px 20px rgba(34, 54, 98, 0.04);
 }
 
 .carte h3 {
@@ -175,7 +213,7 @@
 }
 
 .carte-a-venir {
-  background: rgba(171, 209, 198, 0.15);
+  background: rgba(185, 165, 210, 0.15);
   max-width: 38rem;
 }
 
@@ -193,10 +231,10 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: rgba(0, 70, 67, 0.2);
+  background: rgba(34, 54, 98, 0.2);
 }
 .pastille.active {
-  background: var(--accent-fort);
+  background: var(--chaud);
 }
 
 /* -------------------------------- Boutons -------------------------------- */
@@ -213,14 +251,14 @@
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  box-shadow: 0 4px 10px rgba(0, 70, 67, 0.08);
+  box-shadow: 0 4px 10px rgba(34, 54, 98, 0.08);
   transition: all 0.25s var(--ressort);
 }
 .bouton:hover:not(:disabled) {
   background: var(--encre);
   color: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(0, 70, 67, 0.2);
+  box-shadow: 0 6px 14px rgba(34, 54, 98, 0.2);
 }
 .bouton:active:not(:disabled) {
   transform: translateY(0);
@@ -256,9 +294,9 @@
 }
 .bouton-fort:hover:not(:disabled),
 .bouton.fort:hover:not(:disabled) {
-  background: #6c1a25;
+  background: #18101f;
   color: var(--blanc);
-  box-shadow: 0 6px 14px rgba(139, 38, 53, 0.25);
+  box-shadow: 0 6px 14px rgba(38, 24, 52, 0.3);
 }
 
 .rangee-boutons {
@@ -327,7 +365,7 @@
   display: flex;
   align-items: center;
   gap: 1.1rem;
-  border: 1px solid rgba(0, 70, 67, 0.12);
+  border: 1px solid rgba(34, 54, 98, 0.12);
   border-radius: var(--rayon);
   padding: 1rem 1.4rem;
   background: var(--blanc);
@@ -353,10 +391,10 @@
   stroke-linecap: round;
 }
 .anneau-fond {
-  stroke: rgba(0, 70, 67, 0.1);
+  stroke: rgba(34, 54, 98, 0.1);
 }
 .anneau {
-  stroke: var(--encre);
+  stroke: var(--vif);
   stroke-dasharray: 163.4; /* 2 × π × 26 */
   stroke-dashoffset: 163.4; /* vide au départ, se remplit pendant CONFIRMATION */
 }
@@ -373,7 +411,7 @@
   line-height: 1;
 }
 .lettre-candidate.discrete {
-  color: rgba(0, 70, 67, 0.3);
+  color: rgba(34, 54, 98, 0.3);
 }
 
 /* ------------------------------ Texte composé ---------------------------- */
@@ -391,7 +429,7 @@
 
 .texte-compose {
   min-height: 3.8rem;
-  border: 1px solid rgba(0, 70, 67, 0.15);
+  border: 1px solid rgba(34, 54, 98, 0.15);
   border-radius: var(--rayon);
   padding: 0.8rem 1.2rem;
   font-family: var(--sans);
@@ -403,7 +441,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  box-shadow: inset 0 2px 6px rgba(0, 70, 67, 0.05);
+  box-shadow: inset 0 2px 6px rgba(34, 54, 98, 0.05);
 }
 
 .curseur {
@@ -462,23 +500,23 @@
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  border: 1px solid rgba(0, 70, 67, 0.12);
+  border: 1px solid rgba(34, 54, 98, 0.12);
   border-radius: var(--rayon);
   padding: 1.2rem;
   background: var(--papier);
-  box-shadow: inset 0 2px 6px rgba(0, 70, 67, 0.05);
+  box-shadow: inset 0 2px 6px rgba(34, 54, 98, 0.05);
 }
 
 .bulle {
   align-self: flex-start;
-  background: rgba(171, 209, 198, 0.35);
+  background: rgba(185, 165, 210, 0.35);
   border-radius: 16px 16px 16px 4px;
   padding: 0.6rem 1rem;
   max-width: 85%;
   font-size: 0.95rem;
   font-weight: 500;
   color: var(--encre-fonce);
-  box-shadow: 0 2px 6px rgba(0, 70, 67, 0.04);
+  box-shadow: 0 2px 6px rgba(34, 54, 98, 0.04);
 }
 
 .placeholder {
@@ -511,17 +549,17 @@
   align-items: center;
   gap: 0.4rem;
   background: var(--blanc);
-  border: 1px solid rgba(0, 70, 67, 0.1);
+  border: 1px solid rgba(34, 54, 98, 0.1);
   border-radius: var(--rayon);
   padding: 1.2rem 0.6rem;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 70, 67, 0.03);
+  box-shadow: 0 2px 8px rgba(34, 54, 98, 0.03);
   transition: transform 0.25s var(--ressort), border-color 0.25s var(--ressort), box-shadow 0.25s var(--ressort);
 }
 .carte-lettre:hover {
   transform: translateY(-4px);
   border-color: var(--accent);
-  box-shadow: 0 10px 20px rgba(0, 70, 67, 0.08);
+  box-shadow: 0 10px 20px rgba(34, 54, 98, 0.08);
 }
 
 .lettre-grande {
@@ -547,7 +585,7 @@
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 35, 34, 0.55); /* Fond assombri Cyprus sombre */
+  background: rgba(38, 24, 52, 0.55); /* Fond assombri Cyprus sombre */
   backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
@@ -566,8 +604,8 @@
 .modal-contenu {
   background: var(--papier);
   border-radius: var(--rayon-grand);
-  border: 1px solid rgba(0, 70, 67, 0.18);
-  box-shadow: 0 16px 48px rgba(0, 35, 34, 0.25);
+  border: 1px solid rgba(34, 54, 98, 0.18);
+  box-shadow: 0 16px 48px rgba(38, 24, 52, 0.25);
   padding: 2.4rem;
   max-width: 520px;
   width: 90%;
@@ -619,10 +657,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(171, 209, 198, 0.2);
+  background: rgba(185, 165, 210, 0.2);
   border-radius: var(--rayon-grand);
   padding: 1.2rem;
-  border: 1px solid rgba(0, 70, 67, 0.12);
+  border: 1px solid rgba(34, 54, 98, 0.12);
   position: relative;
   width: 100%;
   aspect-ratio: 1;
@@ -701,7 +739,7 @@
 .formulaire-collecte select {
   padding: 0.75rem 1rem;
   border-radius: var(--rayon);
-  border: 1px solid rgba(0, 70, 67, 0.18);
+  border: 1px solid rgba(34, 54, 98, 0.18);
   font-family: var(--sans);
   font-size: 0.95rem;
   color: var(--encre);
@@ -712,7 +750,7 @@
 .formulaire-collecte select:focus {
   outline: none;
   border-color: var(--encre);
-  box-shadow: 0 0 0 3px rgba(0, 70, 67, 0.08);
+  box-shadow: 0 0 0 3px rgba(34, 54, 98, 0.08);
 }
 
 /* -------------------------- Zone Enregistrement -------------------------- */
@@ -721,9 +759,9 @@
   flex-direction: column;
   gap: 1rem;
   padding: 1.2rem;
-  border: 1px solid rgba(0, 70, 67, 0.15);
+  border: 1px solid rgba(34, 54, 98, 0.15);
   border-radius: var(--rayon);
-  background: rgba(171, 209, 198, 0.12); /* Soft Jade tint */
+  background: rgba(185, 165, 210, 0.12); /* Soft Jade tint */
 }
 .enregistrement-badge-rangee {
   display: flex;
@@ -765,8 +803,8 @@
   min-height: 10rem;
 }
 .zone-enregistrement-corrections {
-  background: rgba(0, 70, 67, 0.03);
-  border-color: rgba(0, 70, 67, 0.1);
+  background: rgba(34, 54, 98, 0.03);
+  border-color: rgba(34, 54, 98, 0.1);
 }
 #compteur-corrections {
   font-size: 2.4rem;
@@ -786,7 +824,7 @@
 
 /* ---------------------------------- Pied --------------------------------- */
 .pied {
-  border-top: 1px solid rgba(0, 70, 67, 0.12);
+  border-top: 1px solid rgba(34, 54, 98, 0.12);
   padding: 1.2rem 2rem;
   background: var(--papier);
 }
@@ -795,8 +833,9 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  font-size: 0.78rem;
-  color: var(--discret);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--encre);
   text-align: center;
 }
 
@@ -804,12 +843,181 @@
 .badge-titre {
   background: var(--encre);
   color: var(--accent);
-  padding: 0.1rem 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  line-height: 0.8; /* recadre les capitales Bebas (pas d'espace bas vide) */
+  padding: 0.26em 0.55rem 0.2em;
   margin-left: 0.6rem;
   border-radius: 16px;
-  display: inline-block;
-  box-shadow: 0 4px 12px rgba(0, 70, 67, 0.15);
+  vertical-align: middle;
+  box-shadow: 0 4px 12px rgba(34, 54, 98, 0.15);
 }
 .text-accent-nav {
   color: var(--accent);
+}
+
+/* ----------------------------- Curseur perso ---------------------------- */
+/* Cache le curseur natif partout quand le curseur perso est actif
+   (la classe est posée par js/curseur.js, jamais sur tactile). */
+.curseur-actif,
+.curseur-actif * {
+  cursor: none !important;
+}
+.curseur-perso {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px; /* écrasé par la taille réelle de l'image via JS */
+  height: 40px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 2147483647; /* au-dessus de tout (modale incluse) */
+  will-change: transform;
+  transition: opacity 0.15s ease;
+}
+.curseur-perso.cache {
+  opacity: 0;
+}
+/* Sécurité tactile : jamais de curseur perso, on garde le natif. */
+@media (hover: none), (pointer: coarse) {
+  .curseur-perso {
+    display: none;
+  }
+  .curseur-actif,
+  .curseur-actif * {
+    cursor: auto !important;
+  }
+}
+
+/* ----------------------------- Statistiques ----------------------------- */
+
+/* Cartes de chiffres clés. */
+.stats-cartes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.6rem;
+}
+.stat-carte {
+  background: var(--blanc);
+  border: 1px solid rgba(34, 54, 98, 0.12);
+  border-radius: var(--rayon);
+  padding: 1.1rem 1.2rem;
+  box-shadow: 0 4px 14px rgba(34, 54, 98, 0.06);
+}
+.stat-valeur {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--encre);
+  line-height: 1;
+}
+.stat-titre {
+  margin-top: 0.35rem;
+  font-weight: 600;
+  color: var(--encre);
+}
+.stat-sous {
+  font-size: 0.8rem;
+  color: var(--discret);
+}
+
+.carte-stats {
+  margin-bottom: 1.4rem;
+}
+
+/* Matrice de confusion : grille heatmap. */
+.stats-matrice {
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+.matrice-grille {
+  display: grid;
+  gap: 2px;
+  min-width: max-content;
+  font-size: 0.62rem;
+}
+.matrice-entete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--discret);
+  min-width: 1.4rem;
+  padding: 0.15rem;
+}
+.matrice-entete.coin {
+  background: transparent;
+}
+.matrice-cellule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  min-width: 1.4rem;
+  border-radius: 3px;
+  background: rgba(34, 54, 98, 0.04);
+  color: transparent; /* cases vides : pas de texte visible */
+}
+.matrice-cellule.remplie {
+  color: var(--blanc);
+  font-weight: 600;
+}
+.legende-matrice {
+  margin-top: 0.9rem;
+  font-size: 0.8rem;
+  color: var(--discret);
+}
+.puce {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 3px;
+  vertical-align: -1px;
+}
+.puce-diag {
+  background: rgba(34, 54, 98, 0.85);
+}
+.puce-conf {
+  background: rgba(139, 38, 53, 0.75);
+}
+
+/* Confiance par lettre de la séance : barres horizontales. */
+.confiance-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+.confiance-ligne {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr auto;
+  align-items: center;
+  gap: 0.8rem;
+}
+.confiance-lettre {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--encre);
+  text-align: center;
+}
+.confiance-piste {
+  height: 0.7rem;
+  background: rgba(34, 54, 98, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.confiance-barre {
+  height: 100%;
+  border-radius: 999px;
+  transition: width var(--duree) var(--ressort);
+}
+.confiance-valeur {
+  font-size: 0.82rem;
+  color: var(--discret);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }

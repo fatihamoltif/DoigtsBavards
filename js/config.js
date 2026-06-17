@@ -10,15 +10,15 @@ export const CONFIG = {
   // --- Machine à états de validation des lettres ---
 
   // Seuil HAUT : confiance minimale pour qu'une trame compte vers la validation.
-  SEUIL_HAUT: 0.85,
+  SEUIL_HAUT: 0.65,
 
   // Seuil BAS : en dessous, on considère que la main a « relâché » la lettre.
   // Deux seuils distincts (hystérésis) pour éviter le tremblement.
   SEUIL_BAS: 0.5,
 
   // K : nombre de trames consécutives stables pour valider une lettre.
-  // À ~30 trames/seconde, 12 trames ≈ 0,4 s de maintien volontaire.
-  K_TRAMES: 12,
+  // À ~30 trames/seconde, 7 trames ≈ 0,23 s de maintien volontaire.
+  K_TRAMES: 7,
 
   // M : nombre de trames d'une lettre clairement différente pour relâcher
   // le verrou (l'utilisateur est passé à une autre lettre).

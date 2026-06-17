@@ -20,6 +20,8 @@ export class Navigation {
     this.accueil = document.getElementById('accueil')
     this.application = document.getElementById('application')
     this.piste = document.getElementById('piste-sections')
+    this.fenetre = document.querySelector('.fenetre-sections')
+    this.panneaux = [...document.querySelectorAll('.panneau')]
     this.onglets = [...document.querySelectorAll('.onglet')]
     this.indicateur = document.getElementById('indicateur-onglet')
     this.sectionActive = 'conversation'
@@ -39,13 +41,28 @@ export class Navigation {
     }
 
     // L'indicateur doit suivre l'onglet si la fenêtre change de taille.
-    window.addEventListener('resize', () => this.placerIndicateur())
+    window.addEventListener('resize', () => {
+      this.placerIndicateur()
+      this.ajusterHauteur()
+    })
+
+    // La fenêtre prend la hauteur du panneau ACTIF (et non du plus grand) :
+    // plus de vide à scroller sous les onglets plus courts. On recalcule aussi
+    // quand le contenu d'un panneau change (ex. caméra, matrice, grille).
+    if ('ResizeObserver' in window) {
+      const observateur = new ResizeObserver(() => this.ajusterHauteur())
+      for (const p of this.panneaux) observateur.observe(p)
+    }
+    this.ajusterHauteur()
   }
 
   ouvrirApplication() {
     document.body.classList.add('mode-application')
     // L'indicateur ne peut être mesuré que quand le menu est visible.
-    requestAnimationFrame(() => this.placerIndicateur())
+    requestAnimationFrame(() => {
+      this.placerIndicateur()
+      this.ajusterHauteur()
+    })
   }
 
   ouvrirAccueil() {
@@ -67,6 +84,7 @@ export class Navigation {
       onglet.setAttribute('aria-current', actif ? 'page' : 'false')
     }
     this.placerIndicateur()
+    this.ajusterHauteur()
 
     if (this.surChangement) this.surChangement(id)
   }
@@ -79,5 +97,16 @@ export class Navigation {
     const parent = actif.parentElement.getBoundingClientRect()
     this.indicateur.style.width = `${boite.width}px`
     this.indicateur.style.transform = `translateX(${boite.left - parent.left}px)`
+  }
+
+  /**
+   * Cale la hauteur de la fenêtre des sections sur celle du panneau actif,
+   * pour qu'il n'y ait pas d'espace vide sous les onglets plus courts que le
+   * panneau le plus grand (la piste est une rangée flex de panneaux 100 %).
+   */
+  ajusterHauteur() {
+    if (!this.fenetre) return
+    const actif = document.getElementById(`section-${this.sectionActive}`)
+    if (actif) this.fenetre.style.height = `${actif.offsetHeight}px`
   }
 }
