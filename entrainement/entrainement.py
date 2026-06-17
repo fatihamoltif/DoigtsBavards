@@ -278,9 +278,10 @@ def main():
               f"(actuel : 0.85 ; ajustez selon le taux d'abstention vécu)")
 
     # --- Leave-one-signer-out : l'écart honnête signeur connu / non vu. ---
+    loso_par_signeur = {}
+    loso_vrai, loso_pred = [], []
     if len(liste_signeurs) >= 2:
         print("\n=== Leave-one-signer-out ===")
-        scores = []
         for signeur in liste_signeurs:
             masque_test = signeurs == signeur
             X_a, y_a, _ = augmenter(
@@ -288,13 +289,42 @@ def main():
                 args.jitter, args.miroir, args.graine,
             )
             r = evaluer(X_a, y_a, X[masque_test], y[masque_test], args.prototypes, args.graine)
-            scores.append(r["accuracy"])
+            loso_par_signeur[signeur] = float(r["accuracy"])
+            loso_vrai.extend(y[masque_test].tolist())
+            loso_pred.extend(r["predictions"].tolist())
             print(f"  test sur « {signeur} » (jamais vu) : {r['accuracy']:.1%}")
-        print(f"  moyenne signeur non vu : {np.mean(scores):.1%} "
+        loso_moyenne = float(np.mean(list(loso_par_signeur.values())))
+        print(f"  moyenne signeur non vu : {loso_moyenne:.1%} "
               f"(vs {res['accuracy']:.1%} signeurs connus) — l'écart est le résultat à discuter")
     else:
+        loso_moyenne = None
         print("\n(Un seul signeur : pas de leave-one-signer-out possible. "
           "Ajoutez les vidéos d'un camarade pour mesurer la généralisation.)")
+
+    # --- Exports JSON pour l'onglet Statistiques de l'application. ---
+    # Matrice de confusion LOSO si possible (la plus parlante), sinon 80/20.
+    if loso_vrai:
+        m_app = matrice_confusion(np.asarray(loso_vrai), np.asarray(loso_pred), lettres)
+        type_matrice = "leave-one-signer-out"
+    else:
+        m_app = m  # la matrice 80/20 déjà calculée plus haut
+        type_matrice = "80/20"
+    with open(os.path.join(RACINE, "modeles", "confusion.json"), "w", encoding="utf-8") as f:
+        json.dump({"type": type_matrice, "labels": lettres, "matrice": m_app.tolist()}, f)
+
+    stats = {
+        "n_lettres": len(lettres),
+        "lettres": lettres,
+        "echantillons": int(len(X)),
+        "signeurs": liste_signeurs,
+        "accuracy_80_20": round(float(res["accuracy"]), 4),
+        "loso_moyenne": round(loso_moyenne, 4) if loso_moyenne is not None else None,
+        "loso_par_signeur": {k: round(v, 4) for k, v in loso_par_signeur.items()},
+        "entraine_le": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    }
+    with open(os.path.join(RACINE, "modeles", "stats.json"), "w", encoding="utf-8") as f:
+        json.dump(stats, f, ensure_ascii=False)
+    print(f"Stats + matrice ({type_matrice}) → modeles/stats.json, modeles/confusion.json")
 
     # --- Modèle FINAL : entraîné sur TOUTES les données (+ augmentation). ---
     X_tout, y_tout, _ = augmenter(X, y, signeurs, args.jitter, args.miroir, args.graine)
