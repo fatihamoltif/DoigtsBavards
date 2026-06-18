@@ -1,32 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cedarville+Cursive&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
 /*
  * base.css — fondations : palette, polices, typographie, page d'accueil.
  *
- * Palette DoigtsBavards (Flax, Midnight, Mint) :
- *   --encre        #0F464C  Midnight (texte principal, header)
- *   --encre-fonce  #092c31  Midnight profond (fonds et contrastes max)
- *   --papier       #F4EB9A  Flax (fond général jaune doux)
+ * Palette « essai » — navy / lavande / pêche / aubergine :
+ *   --encre        #223662  Bleu navy (texte principal, UI sombre)
+ *   --encre-fonce  #261834  Aubergine (fonds sombres, contraste maximum)
+ *   --papier       #f3eef7  Lavande très pâle (fond de page)
  *   --blanc        #ffffff  Fond de carte
- *   --accent       #C8DFDA  Mint (cubes, accents, boutons)
- *   --accent-fort  #8b2635  Rouge urgence (erreurs, suppressions)
- *   --chaleureux   #0F464C  Midnight (survols)
- *   --discret      #3a6b72  Midnight atténué (texte secondaire)
+ *   --accent       #b9a5d2  Lavande (accents doux, boutons par défaut)
+ *   --accent-fort  #261834  Aubergine (boutons d'action forte)
+ *   --chaud        #e0baaa  Pêche (accent chaud : live, badges)
+ *   --vif          #223662  Navy (grands titres cursive + surtitres)
+ *   --discret      #6c6488  Gris-lavande (texte secondaire, bordures)
  */
 
 /* ------------------------------- Variables ------------------------------- */
 :root {
-  --encre: #0F464C;
-  --encre-fonce: #092c31;
-  --papier: #F4EB9A;
+  --encre: #223662;       
+  --encre-fonce: #261834; 
+  --papier: #f3eef7;      
   --blanc: #ffffff;
-  --accent: #C8DFDA;
-  --accent-fort: #8b2635;
-  --chaleureux: #0F464C;
-  --discret: #3a6b72;
+  --accent: #b9a5d2;
+  --accent-fort: #261834;
+  --chaud: #e0baaa;       /* pêche : accent chaud (live, badges) */
+  --vif: #223662;         /* navy : grands titres + surtitres */
+  --chaleureux: #223662;
+  --discret: #6c6488;     
 
-  --serif: 'Urbanist', system-ui, sans-serif;
-  --sans: 'Urbanist', system-ui, sans-serif;
+  --serif: 'Bebas Neue', system-ui, sans-serif;
+  --cursive: 'Cedarville Cursive', cursive;
+  --sans: 'Plus Jakarta Sans', system-ui, sans-serif;
 
   --rayon: 14px;
   --rayon-grand: 20px;
@@ -86,7 +90,7 @@ button {
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--chaleureux);
+  color: var(--vif);
 }
 
 .sous-titre {
@@ -141,7 +145,7 @@ button {
   letter-spacing: 0.03em;
   margin: 0.6rem 0 1.2rem;
   text-transform: uppercase;
-  color: var(--encre);
+  color: var( --discret);
 }
 
 /* --- 1. Hero --- */
@@ -154,6 +158,14 @@ button {
   text-align: center;
   padding: 3rem 1.5rem 4rem;
   position: relative;
+}
+
+/* Logo de la page d'accueil (placez le fichier dans assets/logo.png). */
+.logo-accueil {
+  display: block;
+  width: clamp(110px, 16vw, 185px); /* un peu agrandi */
+  height: auto;
+  margin: 0 auto 1.6rem;
 }
 
 .titre-hero {
@@ -238,9 +250,9 @@ button {
   height: 150px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(0, 70, 67, 0.12);
+  border: 1px solid rgba(34, 54, 98, 0.12);
   border-radius: var(--rayon-grand);
-  background: rgba(171, 209, 198, 0.15); /* Soft Jade avec transparence */
+  background: rgba(185, 165, 210, 0.15); /* Soft Jade avec transparence */
   margin-bottom: 1.1rem;
 }
 
@@ -267,7 +279,7 @@ button {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 3px solid rgba(0, 70, 67, 0.15);
+  border: 3px solid rgba(34, 54, 98, 0.15);
   border-top-color: var(--encre);
   border-right-color: var(--encre);
   transform: rotate(35deg);
@@ -298,7 +310,7 @@ button {
   height: 22px;
   stroke: var(--encre);
   stroke-width: 1.8;
-  fill: rgba(171, 209, 198, 0.4);
+  fill: rgba(185, 165, 210, 0.4);
   stroke-linejoin: round;
   stroke-linecap: round;
 }

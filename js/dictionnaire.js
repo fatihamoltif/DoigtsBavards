@@ -119,8 +119,8 @@ export function initialiserDictionnaire() {
   const fermer = document.getElementById('bouton-fermer-modal')
   const titre = document.getElementById('modal-titre')
   const badge = document.getElementById('modal-badge')
-  const description = document.getElementById('modal-description')
-  const astuce = document.getElementById('modal-astuce')
+  const photo = document.getElementById('modal-photo')
+  const image = document.getElementById('modal-image-lettre')
   const symbole = document.getElementById('symbole-lettre')
   const svg = document.getElementById('svg-illustration-lettre')
 
@@ -138,8 +138,16 @@ export function initialiserDictionnaire() {
       symbole.textContent = lettre
       titre.textContent = `Lettre ${lettre}`
       badge.style.display = LETTRES_MOBILES.has(lettre) ? 'inline-block' : 'none'
-      description.textContent = infos?.description || "Aucune description disponible."
-      astuce.textContent = infos?.astuce || ""
+
+      // Photo du geste : assets/lettres/lettre_<lettre>.png (lettre en minuscule).
+      // La description sert de texte alternatif (accessibilité lecteurs d'écran).
+      photo.style.display = ''
+      image.src = `assets/lettres/lettre_${lettre.toLowerCase()}.png`
+      image.alt = infos?.description
+        ? `Geste de la main pour la lettre ${lettre} : ${infos.description}`
+        : `Geste de la main pour la lettre ${lettre}`
+      // Si l'image n'est pas encore disponible, on masque proprement le cadre.
+      image.onerror = () => { photo.style.display = 'none' }
 
       modal.classList.add('actif')
       modal.setAttribute('aria-hidden', 'false')

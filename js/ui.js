@@ -35,6 +35,7 @@ export class EcranConversation {
     this.texte = ''
     this.cameraActive = false
     this.dernierVecteur = null // vecteur normalisé de la dernière trame
+    this.derniereConfiance = 0 // confiance de la dernière prédiction
     this.surValidationLettre = null // callback appelée lors d'une validation de lettre
 
     this.brancherEvenements()
@@ -114,8 +115,9 @@ export class EcranConversation {
     if (main) {
       const vecteur = normaliserMain(main.landmarks, main.lateralite)
       if (vecteur) {
+        this.dernierVecteur = vecteur
         prediction = this.classifieur.predire(vecteur)
-        console.log(`[KNN Debug] Prédit : "${prediction.lettre}" | Confiance : ${Math.round(prediction.confiance * 100)}%`)
+        this.derniereConfiance = prediction.confiance
       }
     }
     const resultat = this.machine.pousser(prediction, performance.now())
@@ -126,8 +128,8 @@ export class EcranConversation {
   appliquerResultat(resultat, mainVisible) {
     if (resultat.validation?.type === 'lettre') {
       this.ajouterLettre(resultat.validation.lettre)
-      if (this.surValidationLettre && this.dernierVecteur) {
-        this.surValidationLettre(resultat.validation.lettre, this.dernierVecteur)
+      if (this.surValidationLettre) {
+        this.surValidationLettre(resultat.validation.lettre, this.dernierVecteur, this.derniereConfiance)
       }
     } else if (resultat.validation?.type === 'espace') {
       // Une espace seulement si le texte ne se termine pas déjà par une.

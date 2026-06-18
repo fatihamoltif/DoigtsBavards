@@ -73,7 +73,7 @@ export function normaliserMain(landmarks, lateralite = 'Right') {
   const axeX = normaliserVecteur(produitVectoriel(axeY, axeZ))
   if (longueur(axeZ) < 1e-6) return null
 
-  // Miroir gauche → droite : on inverse l'axe X.
+  // Miroir gauche → droite : on inverse l'axe Z (normale de la paume).
   const miroir = lateralite === 'Left' ? -1 : 1
 
   const vecteur = new Float32Array(63)

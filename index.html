@@ -17,6 +17,8 @@
 
     <!-- 1. Hero : titre serif + mot qui s'épelle lettre par lettre. -->
     <div class="hero">
+      <img src="assets/logo.png" alt="Logo DoigtsBavards" class="logo-accueil"
+           onerror="this.style.display='none'" />
       <p class="eyebrow-tiret">Dactylologie LSF · 100 % local</p>
       <h1 class="titre-hero">Doigts<span class="badge-titre">Bavards</span></h1>
       <!-- Typo cinétique : le mot s'assemble lettre par lettre (aria-hidden,
@@ -97,7 +99,7 @@
     <!-- 4. Posture + 5. Entrée dans l'app. -->
     <div class="section-accueil accueil-fin">
       <p class="posture reveal">
-        Épelle est un <strong>outil d'aide à la communication</strong> entre une
+        DoigtsBavards est un <strong>outil d'aide à la communication</strong> entre une
         personne sourde et une personne entendante — pas un remplacement
         d'interprète.
       </p>
@@ -111,7 +113,7 @@
   <div id="application">
     <header class="entete">
       <button id="lien-accueil" class="marque" aria-label="Retour à l'accueil">
-        <span class="logo">DB</span>
+        <img src="assets/logo.png" alt="" class="logo-marque" onerror="this.style.display='none'" />
         <span class="marque-texte">Doigts<span class="text-accent-nav">Bavards</span> <small>LSF ↔ Français</small></span>
       </button>
       <nav class="menu" aria-label="Sections">
@@ -119,7 +121,7 @@
           <button class="onglet actif" data-section="conversation" aria-current="page">Conversation</button>
           <button class="onglet" data-section="dictionnaire" aria-current="false">Dictionnaire</button>
           <button class="onglet" data-section="collecte" aria-current="false">Collecte</button>
-          <button class="onglet" data-section="corrections" aria-current="false">Corrections</button>
+          <button class="onglet" data-section="statistiques" aria-current="false">Statistiques</button>
           <span id="indicateur-onglet" aria-hidden="true"></span>
         </div>
       </nav>
@@ -136,29 +138,22 @@
             <h2 class="titre-section">Communiquer dans les deux sens</h2>
           </div>
 
-          <div class="grille-cubes">
-
-            <!-- CUBE 1 : Dactylologie (Sourd·e → Entendant) -->
-            <article class="cube" id="cube-dactylo">
-              <div class="cube-topbar">
+          <div class="colonnes colonnes-conv">
+            <!-- Sourd·e → entendant : caméra + lettre reconnue -->
+            <article class="carte">
+              <div class="carte-entete">
                 <div>
-                  <p class="cube-label">Dactylologie</p>
-                  <h3 class="cube-titre">Sourd·e → Entendant</h3>
+                  <p class="surtitre">Dactylologie</p>
+                  <h3>Sourd·e → entendant</h3>
+                  <p class="sous-titre">Épelez les lettres une à une devant la caméra</p>
                 </div>
-                <div class="cube-actions">
-                  <p class="indicateur-etat">
-                    <span id="pastille-camera" class="pastille"></span>
-                    <span id="etat-camera">En pause</span>
-                  </p>
-                  <button class="bouton-pleinecran" data-cube="cube-dactylo" title="Plein écran" aria-label="Plein écran">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-                  </button>
-                </div>
+                <p class="indicateur-etat">
+                  <span id="pastille-camera" class="pastille"></span>
+                  <span id="etat-camera">En pause</span>
+                </p>
               </div>
 
-              <p class="cube-sous-titre">Épelez les lettres une à une devant la caméra</p>
-
-              <!-- Zone live : vidéo + squelette -->
+              <!-- Zone live : vidéo + squelette. Nette, sans animation dessus. -->
               <div class="scene-camera">
                 <video id="video-camera" playsinline muted></video>
                 <canvas id="canvas-squelette"></canvas>
@@ -173,43 +168,19 @@
                 </div>
               </div>
 
-              <!-- Réglages -->
-              <details class="reglages">
-                <summary>Réglages de la reconnaissance</summary>
-                <div class="grille-reglages">
-                  <label>Seuil de validation
-                    <input id="reglage-seuil-haut" type="range" min="0.6" max="0.95" step="0.05" value="0.85" />
-                    <span id="valeur-seuil-haut">85 %</span>
-                  </label>
-                  <label>Seuil de relâchement
-                    <input id="reglage-seuil-bas" type="range" min="0.2" max="0.6" step="0.05" value="0.5" />
-                    <span id="valeur-seuil-bas">50 %</span>
-                  </label>
-                  <label>Maintien requis
-                    <input id="reglage-k" type="range" min="6" max="24" step="1" value="12" />
-                    <span id="valeur-k">12 trames</span>
-                  </label>
-                  <label>Pause pour une espace
-                    <input id="reglage-espace" type="range" min="600" max="2500" step="100" value="1200" />
-                    <span id="valeur-espace">1,2 s</span>
-                  </label>
-                </div>
-              </details>
             </article>
 
-            <!-- CUBE 2 : Lettre + Texte composé (centre) -->
-            <article class="cube cube-centre" id="cube-texte">
-              <div class="cube-topbar">
+            <!-- Milieu : lettre courante + mot composé + actions. -->
+            <article class="carte">
+              <div class="carte-entete">
                 <div>
-                  <p class="cube-label">Composition</p>
-                  <h3 class="cube-titre">Texte en cours</h3>
+                  <p class="surtitre">Reconnaissance</p>
+                  <h3>Lettre &amp; texte</h3>
+                  <p class="sous-titre">La lettre en cours, puis le mot composé</p>
                 </div>
-                <button class="bouton-pleinecran" data-cube="cube-texte" title="Plein écran" aria-label="Plein écran">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-                </button>
               </div>
 
-              <!-- Lettre candidate + anneau -->
+              <!-- Lettre candidate + anneau de progression. -->
               <div class="zone-lettre">
                 <div class="cercle-lettre">
                   <svg viewBox="0 0 60 60" aria-hidden="true">
@@ -224,9 +195,7 @@
                 </div>
               </div>
 
-              <!-- Texte composé -->
               <div class="zone-texte">
-                <p class="etiquette">Texte composé</p>
                 <p id="texte-compose" class="texte-compose" aria-live="polite"><span
                    id="curseur-texte" class="curseur" aria-hidden="true"></span></p>
               </div>
@@ -238,48 +207,66 @@
               </div>
             </article>
 
-            <!-- CUBE 3 : Transcription (Entendant → Sourd·e) -->
-            <article class="cube" id="cube-transcription">
-              <div class="cube-topbar">
-                <div>
-                  <p class="cube-label">Transcription</p>
-                  <h3 class="cube-titre">Entendant → Sourd·e</h3>
+            <!-- Réglages de la reconnaissance — placés À CÔTÉ de la
+                 dactylologie (et non dessous) pour occuper la largeur. -->
+            <article class="carte">
+              <details class="reglages" open>
+                <summary>Réglages de la reconnaissance</summary>
+                <div class="grille-reglages">
+                  <label>Seuil de validation
+                    <input id="reglage-seuil-haut" type="range" min="0.6" max="0.95" step="0.05" value="0.65" />
+                    <span id="valeur-seuil-haut">65 %</span>
+                  </label>
+                  <label>Seuil de relâchement
+                    <input id="reglage-seuil-bas" type="range" min="0.2" max="0.6" step="0.05" value="0.5" />
+                    <span id="valeur-seuil-bas">50 %</span>
+                  </label>
+                  <label>Maintien requis
+                    <input id="reglage-k" type="range" min="6" max="24" step="1" value="7" />
+                    <span id="valeur-k">7 trames</span>
+                  </label>
+                  <label>Pause pour une espace
+                    <input id="reglage-espace" type="range" min="600" max="2500" step="100" value="1200" />
+                    <span id="valeur-espace">1,2 s</span>
+                  </label>
                 </div>
-                <div class="cube-actions">
-                  <p class="indicateur-etat">
-                    <span id="pastille-micro" class="pastille"></span>
-                    <span id="etat-micro">Micro coupé</span>
-                  </p>
-                  <button class="bouton-pleinecran" data-cube="cube-transcription" title="Plein écran" aria-label="Plein écran">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-                  </button>
-                </div>
-              </div>
-
-              <p class="cube-sous-titre">La parole devient du texte, en direct</p>
-
-              <div id="flux-transcription" class="flux-transcription">
-                <p id="placeholder-transcription" class="placeholder">
-                  Activez le micro et parlez : le texte s'affichera ici.
-                </p>
-                <p id="ligne-interim" class="ligne-interim"></p>
-              </div>
-
-              <div class="rangee-boutons">
-                <button id="bouton-micro" class="bouton">Activer le micro</button>
-              </div>
-
-              <p class="note">
-                L'audio du micro peut être traité par le service vocal du
-                navigateur. La vidéo, elle, ne quitte jamais l'appareil.
-              </p>
+              </details>
             </article>
+          </div>
 
-          </div><!-- /.grille-cubes -->
+          <!-- Transcription : pleine largeur, sous le bloc dactylo + réglages. -->
+          <article class="carte carte-transcription">
+            <div class="carte-entete">
+              <div>
+                <p class="surtitre">Transcription</p>
+                <h3>Entendant → sourd·e</h3>
+                <p class="sous-titre">La parole devient du texte, en direct</p>
+              </div>
+              <p class="indicateur-etat">
+                <span id="pastille-micro" class="pastille"></span>
+                <span id="etat-micro">Micro coupé</span>
+              </p>
+            </div>
+
+            <div id="flux-transcription" class="flux-transcription">
+              <p id="placeholder-transcription" class="placeholder">
+                Activez le micro et parlez : le texte s'affichera ici.
+              </p>
+              <p id="ligne-interim" class="ligne-interim"></p>
+            </div>
+
+            <div class="rangee-boutons">
+              <button id="bouton-micro" class="bouton">Activer le micro</button>
+            </div>
+
+            <p class="note">
+              L'audio du micro peut être traité par le service vocal du
+              navigateur. La vidéo, elle, ne quitte jamais l'appareil.
+            </p>
+          </article>
         </section>
 
         <!-- ------------------------ DICTIONNAIRE ------------------------- -->
-
         <section class="panneau" id="section-dictionnaire" aria-label="Dictionnaire">
           <div class="entete-section">
             <p class="surtitre">Dictionnaire</p>
@@ -383,82 +370,79 @@
           </div>
         </section>
 
-        <!-- ------------------------ CORRECTIONS -------------------------- -->
-        <section class="panneau" id="section-corrections" aria-label="Corrections">
+        <!-- ----------------------- STATISTIQUES -------------------------- -->
+        <section class="panneau" id="section-statistiques" aria-label="Statistiques">
           <div class="entete-section">
-            <p class="surtitre">Corrections</p>
-            <h2 class="titre-section">Apprendre de ses erreurs</h2>
+            <p class="surtitre">Statistiques</p>
+            <h2 class="titre-section">Fiabilité du modèle</h2>
             <p class="sous-titre">
-              Quand une lettre est mal reconnue, la corriger enrichit les
-              données locales d'entraînement.
+              Les chiffres de l'évaluation hors-ligne, et la confiance des
+              lettres épelées pendant cette séance.
             </p>
           </div>
 
-          <div class="colonnes">
-            <!-- Historique des lettres reconnues à corriger -->
-            <article class="carte">
-              <div class="carte-entete">
-                <div>
-                  <p class="surtitre">Historique des saisies</p>
-                  <h3>Corriger les erreurs</h3>
-                  <p class="sous-titre">Sélectionnez la vraie lettre pour chaque trame enregistrée</p>
-                </div>
-              </div>
+          <!-- Cartes de stats générales (remplies par JS depuis stats.json). -->
+          <div id="stats-cartes" class="stats-cartes"></div>
 
-              <!-- Liste vide par défaut -->
-              <div id="liste-corrections">
-                <p id="placeholder-corrections" class="placeholder">
-                  Aucune lettre reconnue dans cette session. Utilisez d'abord la section Conversation pour générer des saisies.
-                </p>
-              </div>
-            </article>
-
-            <!-- Actions d'export -->
-            <article class="carte">
-              <div class="carte-entete">
-                <div>
-                  <p class="surtitre">Export</p>
-                  <h3>Sauvegarder les corrections</h3>
-                  <p class="sous-titre">Exporter au format d'entraînement</p>
-                </div>
-              </div>
-
-              <div class="zone-enregistrement zone-enregistrement-corrections">
-                <div class="enregistrement-badge-rangee">
-                  <p class="etiquette">Corrections prêtes</p>
-                  <span id="compteur-corrections">0</span>
-                </div>
-                <p class="sous-titre">Chaque correction produit un nouvel échantillon d'entraînement contenant le vecteur normalisé et le bon label.</p>
-              </div>
-
-              <div class="rangee-boutons rangee-boutons-colonne">
-                <button id="bouton-export-corrections" class="bouton fort" disabled>📥 Exporter les corrections (.json)</button>
-                <button id="bouton-clear-corrections" class="bouton bouton-contour" disabled>Tout effacer</button>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <!-- Modal du Dictionnaire -->
-        <div id="modal-dictionnaire" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modal-titre">
-          <div class="modal-contenu">
-            <button id="bouton-fermer-modal" class="bouton-fermer" aria-label="Fermer la vue">&times;</button>
-            <div class="modal-corps">
-              <div class="modal-visuel">
-                <!-- SVG squelette ou illustration de la lettre -->
-                <svg id="svg-illustration-lettre" class="main-squelette"></svg>
-                <div id="symbole-lettre">A</div>
-              </div>
-              <div class="modal-infos">
-                <h3 id="modal-titre">Lettre A</h3>
-                <span id="modal-badge" class="badge-mouvement">avec mouvement</span>
-                <p id="modal-description"></p>
-                <div id="modal-astuce"></div>
+          <!-- Matrice de confusion (grille remplie depuis confusion.json). -->
+          <article class="carte carte-stats">
+            <div class="carte-entete">
+              <div>
+                <p class="surtitre">Évaluation</p>
+                <h3>Matrice de confusion</h3>
+                <p id="stats-matrice-sous-titre" class="sous-titre">Sur un signeur jamais vu (leave-one-signer-out)</p>
               </div>
             </div>
+            <div id="stats-matrice" class="stats-matrice">
+              <p class="placeholder">Lancez l'entraînement pour générer la matrice (modeles/confusion.json).</p>
+            </div>
+            <p class="legende-matrice">
+              <span class="puce puce-diag"></span> bonne reconnaissance (diagonale)
+              &nbsp;·&nbsp; <span class="puce puce-conf"></span> confusion
+            </p>
+          </article>
+
+          <!-- Confiance par lettre épelée pendant la séance (en mémoire). -->
+          <article class="carte carte-stats">
+            <div class="carte-entete">
+              <div>
+                <p class="surtitre">Cette séance</p>
+                <h3>Confiance par lettre</h3>
+                <p class="sous-titre">Confiance moyenne et nombre d'occurrences des lettres validées en Conversation</p>
+              </div>
+            </div>
+            <div id="stats-confiance">
+              <p id="placeholder-confiance" class="placeholder">
+                Aucune lettre épelée pour l'instant. Utilisez la Conversation : les lettres validées apparaîtront ici.
+              </p>
+            </div>
+          </article>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- Modal du Dictionnaire — placé HORS de .piste-sections : cette piste a
+         un transform (translateX) qui « piège » tout enfant position:fixed et
+         décalait la modale sur l'onglet Conversation. Ici, elle couvre l'écran. -->
+    <div id="modal-dictionnaire" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modal-titre">
+      <div class="modal-contenu">
+        <button id="bouton-fermer-modal" class="bouton-fermer" aria-label="Fermer la vue">&times;</button>
+        <div class="modal-corps">
+          <div class="modal-visuel">
+            <!-- SVG squelette ou illustration de la lettre -->
+            <svg id="svg-illustration-lettre" class="main-squelette"></svg>
+            <div id="symbole-lettre">A</div>
+          </div>
+          <div class="modal-infos">
+            <h3 id="modal-titre">Lettre A</h3>
+            <span id="modal-badge" class="badge-mouvement">varié</span>
           </div>
         </div>
-
+        <!-- Photo du geste de la main (assets/lettres/lettre_X.png) -->
+        <figure id="modal-photo" class="modal-photo">
+          <img id="modal-image-lettre" src="" alt="" />
+        </figure>
       </div>
     </div>
 
@@ -474,51 +458,6 @@
     </footer>
   </div>
 
-  <!-- Overlay pour le mode plein écran des cubes -->
-  <div id="overlay-pleinecran" class="overlay-pleinecran"></div>
-
   <script type="module" src="js/app.js"></script>
-  <script>
-    // Plein écran des cubes conversation
-    document.addEventListener('DOMContentLoaded', () => {
-      const overlay = document.getElementById('overlay-pleinecran')
-      let cubeActif = null
-
-      function ouvrirPleinEcran(cube) {
-        if (cubeActif) fermerPleinEcran()
-        cubeActif = cube
-        cube.classList.add('pleinecran')
-        overlay.classList.add('actif')
-        document.body.style.overflow = 'hidden'
-      }
-
-      function fermerPleinEcran() {
-        if (!cubeActif) return
-        cubeActif.classList.remove('pleinecran')
-        overlay.classList.remove('actif')
-        document.body.style.overflow = ''
-        cubeActif = null
-      }
-
-      document.querySelectorAll('.bouton-pleinecran').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation()
-          const cube = document.getElementById(btn.dataset.cube)
-          if (!cube) return
-          if (cube.classList.contains('pleinecran')) {
-            fermerPleinEcran()
-          } else {
-            ouvrirPleinEcran(cube)
-          }
-        })
-      })
-
-      overlay.addEventListener('click', fermerPleinEcran)
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') fermerPleinEcran()
-      })
-    })
-  </script>
 </body>
 </html>

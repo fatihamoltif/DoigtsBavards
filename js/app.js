@@ -5,17 +5,19 @@ import { CONFIG, ALPHABET, LETTRES_MOBILES } from './config.js'
 import { initialiserAccueil } from './accueil.js'
 import { initialiserDictionnaire } from './dictionnaire.js'
 import { EcranCollecte } from './collecte.js'
-import { ManagerCorrections } from './corrections.js'
+import { GestionnaireStatistiques } from './statistiques.js'
+import { initialiserCurseur } from './curseur.js'
 
+initialiserCurseur()
 initialiserAccueil()
 const conversation = new EcranConversation()
 const collecte = new EcranCollecte()
-const corrections = new ManagerCorrections()
+const statistiques = new GestionnaireStatistiques()
 
 
-// Lier la validation de lettre dans la Conversation à la liste de Corrections
-conversation.surValidationLettre = (lettre, vecteur) => {
-  corrections.ajouterSaisie(lettre, vecteur)
+// Chaque lettre validée en Conversation alimente les stats de confiance.
+conversation.surValidationLettre = (lettre, vecteur, confiance) => {
+  statistiques.enregistrerLettre(lettre, confiance)
 }
 
 new Navigation({
@@ -46,7 +48,7 @@ for (const lettre of ALPHABET) {
   if (LETTRES_MOBILES.has(lettre)) {
     const badge = document.createElement('figcaption')
     badge.className = 'badge-mouvement'
-    badge.textContent = 'avec mouvement'
+    badge.textContent = 'varié'
     carte.appendChild(badge)
   }
   grille.appendChild(carte)
