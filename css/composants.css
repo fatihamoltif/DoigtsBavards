@@ -706,19 +706,23 @@
   font-size: 0.7rem;
   padding: 0.2rem 0.65rem;
 }
-#modal-description {
-  margin-top: 1.2rem;
-  color: var(--encre);
-  font-size: 0.98rem;
-  line-height: 1.6;
+/* Photo du geste de la main, sous le cadre squelette + titre. */
+.modal-photo {
+  margin: 1.6rem 0 0;
+  padding: 1.2rem;
+  background: rgba(185, 165, 210, 0.2);
+  border: 1px solid rgba(34, 54, 98, 0.12);
+  border-radius: var(--rayon-grand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-#modal-astuce {
-  margin-top: 1rem;
-  font-style: italic;
-  color: var(--discret);
-  font-size: 0.88rem;
-  border-left: 3px solid var(--accent);
-  padding-left: 0.8rem;
+.modal-photo img {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  border-radius: var(--rayon);
 }
 
 /* -------------------------- Formulaire Collecte -------------------------- */
