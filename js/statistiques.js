@@ -17,7 +17,6 @@ export class GestionnaireStatistiques {
     this.confiance = document.getElementById('stats-confiance')
     this.placeholderConfiance = document.getElementById('placeholder-confiance')
 
-    // Séance : lettre → { somme, n } pour la confiance moyenne.
     this.seance = new Map()
 
     this.chargerGlobales()
@@ -38,7 +37,7 @@ export class GestionnaireStatistiques {
       const r = await fetch(url)
       return r.ok ? await r.json() : null
     } catch {
-      return null // pas de fichier (entraînement pas encore lancé) : on ignore
+      return null
     }
   }
 
@@ -86,12 +85,11 @@ export class GestionnaireStatistiques {
     grille.className = 'matrice-grille'
     grille.style.gridTemplateColumns = `auto repeat(${n}, 1fr)`
 
-    // En-tête : coin vide + lettres prédites (colonnes).
     grille.appendChild(this.entete('', 'coin'))
     for (const l of labels) grille.appendChild(this.entete(l))
 
     matrice.forEach((ligne, i) => {
-      grille.appendChild(this.entete(labels[i])) // vraie lettre (ligne)
+      grille.appendChild(this.entete(labels[i]))
       const total = ligne.reduce((a, b) => a + b, 0)
       ligne.forEach((valeur, j) => {
         const frac = total ? valeur / total : 0
@@ -101,10 +99,8 @@ export class GestionnaireStatistiques {
           cell.textContent = valeur
           cell.classList.add('remplie')
           if (i === j) {
-            // Diagonale = bonne reconnaissance : teinte navy selon la proportion.
             cell.style.background = `rgba(34, 54, 98, ${(0.15 + 0.85 * frac).toFixed(3)})`
           } else {
-            // Hors diagonale = confusion : teinte bordeaux, amplifiée pour rester visible.
             cell.style.background = `rgba(139, 38, 53, ${Math.min(0.9, 0.25 + frac * 4).toFixed(3)})`
           }
         }
@@ -160,7 +156,6 @@ export class GestionnaireStatistiques {
       const barre = document.createElement('div')
       barre.className = 'confiance-barre'
       barre.style.width = `${pourcent}%`
-      // Rouge (faible) → discret → teal (forte).
       barre.style.background =
         moy >= 0.7 ? 'var(--encre)' : moy >= 0.5 ? 'var(--discret)' : 'var(--accent-fort)'
       piste.appendChild(barre)

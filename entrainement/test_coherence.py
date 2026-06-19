@@ -24,7 +24,6 @@ import sys
 
 from normalisation import normaliser_main, VERSION_NORMALISATION
 
-# Sur Windows, ajouter le chemin par défaut de Node.js au PATH s'il n'y est pas déjà.
 if sys.platform == "win32":
     node_path = r"C:\Program Files\nodejs"
     if node_path not in os.environ["PATH"]:
@@ -52,7 +51,6 @@ def main():
     fixtures = charger_fixtures()
     cote_js = vecteurs_js()
 
-    # 0. Les empreintes de version doivent correspondre.
     if cote_js["version"] != VERSION_NORMALISATION:
         print(f"ÉCHEC : versions différentes "
               f"(JS={cote_js['version']!r}, Python={VERSION_NORMALISATION!r}).")

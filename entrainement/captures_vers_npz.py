@@ -22,7 +22,6 @@ import numpy as np
 
 DIMENSION_ATTENDUE = 63
 
-# Permet de lancer le script depuis la racine du projet ou depuis `entrainement/`.
 DOSSIER_SCRIPT = Path(__file__).resolve().parent
 RACINE_PROJET = DOSSIER_SCRIPT.parent
 for chemin in (DOSSIER_SCRIPT, RACINE_PROJET):

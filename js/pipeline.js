@@ -13,21 +13,20 @@
 
 import { FilesetResolver, HandLandmarker } from '../lib/vision_bundle.mjs'
 
-// Connexions entre les 21 points, pour dessiner le squelette de la main.
 const LIAISONS_MAIN = [
-  [0, 1], [1, 2], [2, 3], [3, 4], // pouce
-  [0, 5], [5, 6], [6, 7], [7, 8], // index
-  [5, 9], [9, 10], [10, 11], [11, 12], // majeur
-  [9, 13], [13, 14], [14, 15], [15, 16], // annulaire
-  [13, 17], [17, 18], [18, 19], [19, 20], // auriculaire
-  [0, 17], // paume
+  [0, 1], [1, 2], [2, 3], [3, 4],
+  [0, 5], [5, 6], [6, 7], [7, 8],
+  [5, 9], [9, 10], [10, 11], [11, 12],
+  [9, 13], [13, 14], [14, 15], [15, 16],
+  [13, 17], [17, 18], [18, 19], [19, 20],
+  [0, 17],
 ]
 
 export class PipelineCamera {
   constructor() {
     this.latenceMs = 0
-    this.flux = null // MediaStream de la webcam
-    this.detecteur = null // HandLandmarker MediaPipe
+    this.flux = null
+    this.detecteur = null
     this.boucleActive = false
     this.idBoucle = null
   }
@@ -46,7 +45,7 @@ export class PipelineCamera {
       this.detecteur = await HandLandmarker.createFromOptions(fileset, options)
     } catch (erreur) {
       console.warn('GPU indisponible, repli sur CPU.', erreur)
-      options.baseOptions.delegate = 'CPU'   // ← repli
+      options.baseOptions.delegate = 'CPU'
       this.detecteur = await HandLandmarker.createFromOptions(fileset, options)
     }
   }
@@ -118,8 +117,8 @@ export class PipelineCamera {
   dessinerMain(ctx, points, largeur, hauteur) {
     ctx.clearRect(0, 0, largeur, hauteur)
     ctx.lineWidth = 2
-    ctx.strokeStyle = '#D5B893' // tan : lisible sur la vidéo
-    ctx.fillStyle = '#FBFAF8' // blanc cassé
+    ctx.strokeStyle = '#D5B893'
+    ctx.fillStyle = '#FBFAF8'
 
     for (const [a, b] of LIAISONS_MAIN) {
       ctx.beginPath()

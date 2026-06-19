@@ -31,7 +31,7 @@ export class ClassifieurMock {
   constructor(options = {}) {
     this.script = options.script ? [...options.script.toUpperCase()] : null
     this.indexScript = 0
-    this.phase = 'transition' // 'maintien' ou 'transition'
+    this.phase = 'transition'
     this.tramesRestantes = 0
     this.cible = 'A'
     this.terminee = false
@@ -47,7 +47,6 @@ export class ClassifieurMock {
 
   phaseSuivante() {
     if (this.phase === 'transition') {
-      // Nouvelle lettre à tenir.
       if (this.script) {
         if (this.indexScript >= this.script.length) {
           this.terminee = true
@@ -60,10 +59,10 @@ export class ClassifieurMock {
         this.cible = this.lettreAuHasard()
       }
       this.phase = 'maintien'
-      this.tramesRestantes = 16 + Math.floor(Math.random() * 8) // ~16–23 trames
+      this.tramesRestantes = 16 + Math.floor(Math.random() * 8)
     } else {
       this.phase = 'transition'
-      this.tramesRestantes = 8 + Math.floor(Math.random() * 5) // ~8–12 trames
+      this.tramesRestantes = 8 + Math.floor(Math.random() * 5)
     }
   }
 
@@ -73,15 +72,12 @@ export class ClassifieurMock {
     this.tramesRestantes -= 1
 
     if (this.phase === 'transition') {
-      // Entre deux lettres : prédictions floues, confiance basse.
       return { lettre: this.lettreAuHasard(), confiance: 0.2 + Math.random() * 0.25 }
     }
-    // Maintien : la cible domine nettement, avec un peu de bruit réaliste.
     const r = Math.random()
     if (r < 0.9) {
       return { lettre: this.cible, confiance: 0.87 + Math.random() * 0.12 }
     }
-    // Trame bruitée occasionnelle (la machine à états doit l'absorber).
     return { lettre: this.lettreAuHasard(this.cible), confiance: 0.4 + Math.random() * 0.3 }
   }
 }
@@ -95,7 +91,6 @@ export class ClassifieurKNN {
    *          calculés en Python à partir des captures.
    */
   constructor(modele) {
-    // On aplatit en une liste [{lettre, vecteur}] pour un parcours simple.
     this.prototypes = []
     for (const [lettre, vecteurs] of Object.entries(modele.prototypes)) {
       for (const vecteur of vecteurs) {
@@ -105,7 +100,6 @@ export class ClassifieurKNN {
   }
 
 predire(vecteur) {
-    // Pour CHAQUE lettre, on garde la distance a son prototype le plus proche.
     const distanceParLettre = {}
     for (const proto of this.prototypes) {
       let d = 0
@@ -119,14 +113,12 @@ predire(vecteur) {
       }
     }
 
-    // Classer les lettres, de la plus proche a la plus lointaine.
     const classees = Object.entries(distanceParLettre).sort((a, b) => a[1] - b[1])
     if (classees.length === 0) return { lettre: '?', confiance: 0 }
 
-    const [lettre, d1] = classees[0]                            // meilleure lettre
-    const d2 = classees.length > 1 ? classees[1][1] : Infinity  // 2e meilleure lettre
+    const [lettre, d1] = classees[0]
+    const d2 = classees.length > 1 ? classees[1][1] : Infinity
 
-    // Marge entre la meilleure lettre et la 2e : 0 = ambigu, 1 = net.
     const confiance = d2 === Infinity ? 1 : 1 - d1 / d2
     return { lettre, confiance }
   }
@@ -155,12 +147,10 @@ export class ClassifieurMLP {
         for (let i = 0; i < activation.length; i++) {
           somme += poids[j][i] * activation[i]
         }
-        // ReLU sur les couches cachées, identité sur la dernière (avant softmax).
         sortie[j] = c < this.couches.length - 1 ? Math.max(0, somme) : somme
       }
       activation = sortie
     }
-    // Softmax → probabilités par lettre.
     const max = Math.max(...activation)
     const exps = activation.map((v) => Math.exp(v - max))
     const total = exps.reduce((a, b) => a + b, 0)
@@ -184,7 +174,6 @@ export async function chargerClassifieur() {
     const reponse = await fetch('modeles/modele-lettres.json')
     if (reponse.ok) {
       const modele = await reponse.json()
-      // Garde-fou : refuser un modèle normalisé avec une autre convention.
       if (modele.version_normalisation && modele.version_normalisation !== VERSION_NORMALISATION) {
         console.warn(`Modèle en ${modele.version_normalisation}, code en ${VERSION_NORMALISATION} → ignoré.`)
         return new ClassifieurMock()
@@ -193,7 +182,6 @@ export async function chargerClassifieur() {
       if (modele.type === 'mlp') return new ClassifieurMLP(modele)
     }
   } catch {
-    // Pas de modèle entraîné : c'est normal en phase de développement.
   }
   return new ClassifieurMock()
 }

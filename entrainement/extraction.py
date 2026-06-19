@@ -35,10 +35,8 @@ DOSSIER_VIDEOS = os.path.join(ICI, "videos")
 MODELE_TASK = os.path.join(RACINE, "modeles", "hand_landmarker.task")
 SORTIE = os.path.join(ICI, "donnees_landmarks.npz")
 
-# A–Z sauf J et Z (lettres à mouvement, traitées en phase 2).
 LETTRES = [c for c in "ABCDEFGHIKLMNOPQRSTUVWXY"]
 
-# Confiance minimale de détection (mêmes valeurs que le pipeline JS).
 CONFIANCE_MIN = 0.5
 EXTENSIONS = (".mp4", ".webm", ".mov", ".avi", ".mkv")
 
@@ -69,17 +67,15 @@ def extraire_video(detecteur, chemin):
         ok, image_bgr = capture.read()
         if not ok:
             break
-        # OpenCV lit en BGR ; MediaPipe attend du RGB.
         image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
         image_mp = mp.Image(image_format=mp.ImageFormat.SRGB, data=image_rgb)
 
-        # Horodatage croissant en millisecondes (requis en mode VIDEO).
         timestamp_ms = int(index * 1000.0 / fps)
         resultat = detecteur.detect_for_video(image_mp, timestamp_ms)
         index += 1
 
         if not resultat.hand_landmarks:
-            continue  # aucune main détectée sur cette image
+            continue
         landmarks = resultat.hand_landmarks[0]
         lateralite = "Right"
         if resultat.handedness and resultat.handedness[0]:
@@ -114,7 +110,7 @@ def main():
         for fichier in sorted(os.listdir(dossier)):
             if not fichier.lower().endswith(EXTENSIONS):
                 continue
-            signeur = os.path.splitext(fichier)[0]  # nom de fichier = signeur
+            signeur = os.path.splitext(fichier)[0]
             chemin = os.path.join(dossier, fichier)
             vecteurs = extraire_video(detecteur, chemin)
             for v in vecteurs:

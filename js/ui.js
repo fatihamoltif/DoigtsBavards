@@ -10,7 +10,6 @@ const CIRCONFERENCE = 2 * Math.PI * 26
 
 export class EcranConversation {
   constructor() {
-    // --- Références DOM (côté dactylologie). ---
     this.video = document.getElementById('video-camera')
     this.canvas = document.getElementById('canvas-squelette')
     this.boutonCamera = document.getElementById('bouton-camera')
@@ -28,15 +27,14 @@ export class EcranConversation {
     this.boutonLire = document.getElementById('bouton-lire')
     this.pastilleCamera = document.getElementById('pastille-camera')
 
-    // --- Logique. ---
     this.pipeline = new PipelineCamera()
     this.machine = new MachineLettres(CONFIG)
-    this.classifieur = null // chargé au démarrage de la caméra
+    this.classifieur = null
     this.texte = ''
     this.cameraActive = false
-    this.dernierVecteur = null // vecteur normalisé de la dernière trame
-    this.derniereConfiance = 0 // confiance de la dernière prédiction
-    this.surValidationLettre = null // callback appelée lors d'une validation de lettre
+    this.dernierVecteur = null
+    this.derniereConfiance = 0
+    this.surValidationLettre = null
 
     this.brancherEvenements()
     this.brancherReglages()
@@ -132,7 +130,6 @@ export class EcranConversation {
         this.surValidationLettre(resultat.validation.lettre, this.dernierVecteur, this.derniereConfiance)
       }
     } else if (resultat.validation?.type === 'espace') {
-      // Une espace seulement si le texte ne se termine pas déjà par une.
       if (this.texte && !this.texte.endsWith(' ')) {
         this.texte += ' '
         this.afficherTexte()
@@ -144,7 +141,6 @@ export class EcranConversation {
   ajouterLettre(lettre) {
     this.texte += lettre
     this.afficherTexte()
-    // Animation « pop » sur la dernière lettre ajoutée.
     const derniere = this.texteCompose.lastElementChild
     if (derniere) derniere.classList.add('pop')
   }
@@ -152,7 +148,6 @@ export class EcranConversation {
   /* ------------------------------ Affichage ------------------------------ */
 
   afficherTexte() {
-    // Chaque caractère dans son propre <span> pour pouvoir animer le dernier.
     this.texteCompose.textContent = ''
     for (const caractere of this.texte) {
       const span = document.createElement('span')
@@ -168,7 +163,6 @@ export class EcranConversation {
   }
 
   afficherEtatMachine(resultat, mainVisible = false) {
-    // Lettre candidate + anneau de progression (compteur / K).
     if (resultat.etat === ETATS.CONFIRMATION && resultat.candidate) {
       this.lettreCandidate.textContent = resultat.candidate
       this.lettreCandidate.classList.remove('discrete')
@@ -195,7 +189,6 @@ export class EcranConversation {
   /* ----------------------- Réglages (curseurs) --------------------------- */
 
   brancherReglages() {
-    // Chaque curseur modifie CONFIG en direct (pratique pour calibrer).
     const lier = (idCurseur, idValeur, cle, formater) => {
       const curseur = document.getElementById(idCurseur)
       const valeur = document.getElementById(idValeur)

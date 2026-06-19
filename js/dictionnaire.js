@@ -126,10 +126,8 @@ export function initialiserDictionnaire() {
 
   if (!modal || !fermer) return
 
-  // Dessine la main squelette par défaut dans le modal
   dessinerMainSquelette(svg)
 
-  // Associe le clic sur chaque carte de la grille
   document.querySelectorAll('.carte-lettre').forEach((carte) => {
     carte.addEventListener('click', () => {
       const lettre = carte.querySelector('.lettre-grande').textContent
@@ -139,14 +137,11 @@ export function initialiserDictionnaire() {
       titre.textContent = `Lettre ${lettre}`
       badge.style.display = LETTRES_MOBILES.has(lettre) ? 'inline-block' : 'none'
 
-      // Photo du geste : assets/lettres/lettre_<lettre>.png (lettre en minuscule).
-      // La description sert de texte alternatif (accessibilité lecteurs d'écran).
       photo.style.display = ''
       image.src = `assets/lettres/lettre_${lettre.toLowerCase()}.png`
       image.alt = infos?.description
         ? `Geste de la main pour la lettre ${lettre} : ${infos.description}`
         : `Geste de la main pour la lettre ${lettre}`
-      // Si l'image n'est pas encore disponible, on masque proprement le cadre.
       image.onerror = () => { photo.style.display = 'none' }
 
       modal.classList.add('actif')
@@ -154,7 +149,6 @@ export function initialiserDictionnaire() {
     })
   })
 
-  // Fermeture du modal
   const fermerModal = () => {
     modal.classList.remove('actif')
     modal.setAttribute('aria-hidden', 'true')

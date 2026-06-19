@@ -14,9 +14,9 @@
 
 const MOTS = ['BONJOUR', 'MERCI', 'BIENVENUE', 'LSF']
 
-const DUREE_PAR_LETTRE_MS = 160 // décalage entre deux lettres
-const PAUSE_MOT_MS = 1800 // temps d'affichage du mot complet
-const DUREE_SORTIE_MS = 450 // fondu de sortie
+const DUREE_PAR_LETTRE_MS = 160
+const PAUSE_MOT_MS = 1800
+const DUREE_SORTIE_MS = 450
 
 const mouvementReduit = window.matchMedia('(prefers-reduced-motion: reduce)')
 
@@ -24,7 +24,6 @@ const mouvementReduit = window.matchMedia('(prefers-reduced-motion: reduce)')
 export function lancerEpellation(conteneur) {
   if (!conteneur) return
 
-  // Mouvement réduit : premier mot statique, pas de cycle.
   if (mouvementReduit.matches) {
     conteneur.textContent = MOTS[0]
     return
@@ -42,14 +41,13 @@ export function lancerEpellation(conteneur) {
       const lettre = document.createElement('span')
       lettre.className = 'lettre-epelee'
       lettre.textContent = mot[i]
-      // Décalage d'apparition : chaque lettre arrive après la précédente.
       lettre.style.animationDelay = `${i * DUREE_PAR_LETTRE_MS}ms`
       conteneur.appendChild(lettre)
     }
 
     const dureeAssemblage = mot.length * DUREE_PAR_LETTRE_MS + 500
     setTimeout(() => {
-      conteneur.classList.add('sortie') // fondu du mot complet
+      conteneur.classList.add('sortie')
       setTimeout(afficherMot, DUREE_SORTIE_MS)
     }, dureeAssemblage + PAUSE_MOT_MS)
   }
@@ -66,7 +64,6 @@ export function lancerEpellation(conteneur) {
 export function activerRevelations(racineScroll) {
   const elements = document.querySelectorAll('.reveal')
 
-  // Mouvement réduit : tout est visible d'emblée.
   if (mouvementReduit.matches || !('IntersectionObserver' in window)) {
     for (const el of elements) el.classList.add('visible')
     return
@@ -77,7 +74,7 @@ export function activerRevelations(racineScroll) {
       for (const entree of entrees) {
         if (entree.isIntersecting) {
           entree.target.classList.add('visible')
-          observateur.unobserve(entree.target) // une seule révélation
+          observateur.unobserve(entree.target)
         }
       }
     },
@@ -94,14 +91,13 @@ export function activerRevelations(racineScroll) {
  * l'imagerie EST la donnée que l'app traite (aucune photo).
  */
 
-// Les 21 points (x, y) dans une viewBox 0 0 100 130 — pose canonique.
 const POINTS_MAIN = [
-  [50, 117], // 0 poignet
-  [34, 103], [22, 88], [14, 76], [8, 65], // pouce
-  [42, 67], [40, 45], [38, 31], [38, 18], // index
-  [54, 65], [54, 41], [54, 25], [54, 11], // majeur
-  [66, 67], [68, 45], [68, 31], [68, 18], // annulaire
-  [76, 72], [80, 54], [82, 41], [84, 29], // auriculaire
+  [50, 117],
+  [34, 103], [22, 88], [14, 76], [8, 65],
+  [42, 67], [40, 45], [38, 31], [38, 18],
+  [54, 65], [54, 41], [54, 25], [54, 11],
+  [66, 67], [68, 45], [68, 31], [68, 18],
+  [76, 72], [80, 54], [82, 41], [84, 29],
 ]
 
 const LIAISONS = [

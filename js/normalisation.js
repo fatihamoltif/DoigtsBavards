@@ -28,7 +28,6 @@ const BASE_AURICULAIRE = 17
  */
 export const VERSION_NORMALISATION = 'main-63d-v2'
 
-// Petites fonctions de calcul vectoriel 3D (lisibles, sans bibliothèque).
 function soustraire(a, b) {
   return [a.x - b.x, a.y - b.y, a.z - b.z]
 }
@@ -61,19 +60,16 @@ export function normaliserMain(landmarks, lateralite = 'Right') {
   const poignet = landmarks[POIGNET]
   const majeur = landmarks[BASE_MAJEUR]
 
-  // Échelle de référence : distance poignet → base du majeur.
   const versMajeur = soustraire(majeur, poignet)
   const echelle = longueur(versMajeur)
-  if (echelle < 1e-6) return null // main dégénérée (mauvaise détection)
+  if (echelle < 1e-6) return null
 
-  // Repère canonique de la main.
   const axeY = normaliserVecteur(versMajeur)
   const traversPaume = soustraire(landmarks[BASE_INDEX], landmarks[BASE_AURICULAIRE])
-  const axeZ = normaliserVecteur(produitVectoriel(traversPaume, axeY)) // normale paume
+  const axeZ = normaliserVecteur(produitVectoriel(traversPaume, axeY))
   const axeX = normaliserVecteur(produitVectoriel(axeY, axeZ))
   if (longueur(axeZ) < 1e-6) return null
 
-  // Miroir gauche → droite : on inverse l'axe Z (normale de la paume).
   const miroir = lateralite === 'Left' ? -1 : 1
 
   const vecteur = new Float32Array(63)

@@ -10,7 +10,6 @@ import { normaliserMain } from './normalisation.js'
 
 export class EcranCollecte {
   constructor() {
-    // --- Références DOM ---
     this.video = document.getElementById('video-camera-collecte')
     this.canvas = document.getElementById('canvas-squelette-collecte')
     this.boutonCamera = document.getElementById('bouton-camera-collecte')
@@ -30,9 +29,8 @@ export class EcranCollecte {
     this.boutonSupprimer = document.getElementById('bouton-supprimer-collecte')
     this.boutonExport = document.getElementById('bouton-export-collecte')
 
-    // --- Logique ---
     this.pipeline = new PipelineCamera()
-    this.trames = [] // Contiendra les vecteurs normalisés de 63 dimensions
+    this.trames = []
     this.enEnregistrement = false
     this.cameraActive = false
 
@@ -41,7 +39,6 @@ export class EcranCollecte {
   }
 
   initialiserFormulaire() {
-    // Peupler le sélecteur de lettres
     if (this.selectLettre) {
       this.selectLettre.textContent = ''
       for (const lettre of ALPHABET) {
@@ -59,7 +56,6 @@ export class EcranCollecte {
     this.boutonCamera.addEventListener('click', () => this.demarrerCamera())
     this.boutonCouper.addEventListener('click', () => this.arreterCamera())
 
-    // Validation des contrôles en fonction du nom du signeur
     const validerControles = () => {
       const signeurOk = this.inputSigneur.value.trim().length > 0
       const recPret = signeurOk && this.cameraActive
@@ -82,7 +78,6 @@ export class EcranCollecte {
     this.inputSigneur.addEventListener('input', validerControles)
     this.selectLettre.addEventListener('change', validerControles)
 
-    // Contrôles d'enregistrement
     this.boutonRec.addEventListener('click', () => {
       if (this.enEnregistrement) {
         this.arrêterEnregistrement()
@@ -116,7 +111,7 @@ export class EcranCollecte {
       this.boutonCouper.hidden = false
       this.pastilleCamera.classList.add('active')
       this.etatCamera.textContent = 'Caméra active'
-      this.inputSigneur.dispatchEvent(new Event('input')) // Déclenche validation
+      this.inputSigneur.dispatchEvent(new Event('input'))
     } catch (erreur) {
       console.error(erreur)
       this.messageCamera.textContent = "Impossible d'initialiser la caméra ou le modèle."
@@ -134,7 +129,7 @@ export class EcranCollecte {
     this.pastilleCamera.classList.remove('active')
     this.etatCamera.textContent = 'En pause'
     this.messageCamera.textContent = ''
-    this.inputSigneur.dispatchEvent(new Event('input')) // Déclenche validation
+    this.inputSigneur.dispatchEvent(new Event('input'))
   }
 
   /* ------------------------ Enregistrement ------------------------------- */
@@ -163,7 +158,6 @@ export class EcranCollecte {
     if (main) {
       const vecteur = normaliserMain(main.landmarks, main.lateralite)
       if (vecteur) {
-        // Ajoute la trame (conversion Float32Array → Array simple pour le JSON)
         this.trames.push(Array.from(vecteur))
         this.compteurCaptures.textContent = this.trames.length
         this.boutonSupprimer.disabled = false
@@ -180,7 +174,6 @@ export class EcranCollecte {
     const signeur = this.inputSigneur.value.trim().toLowerCase().replace(/\s+/g, '_')
     const lettre = this.selectLettre.value
 
-    // Format du Contrat #6
     const exportData = {
       lettre: lettre,
       signeur: signeur,
@@ -199,7 +192,6 @@ export class EcranCollecte {
     document.body.removeChild(lien)
     URL.revokeObjectURL(url)
 
-    // Réinitialise après export
     this.trames = []
     this.compteurCaptures.textContent = '0'
     this.arrêterEnregistrement()

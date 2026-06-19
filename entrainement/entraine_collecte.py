@@ -1,4 +1,3 @@
-# Entraîneur depuis les exports Collecte navigateur (capture_*.json). Celui utilisé actuellement.
 
 """Entraînement KNN depuis les exports de la Collecte navigateur (JSON)."""
 import json, glob, os
@@ -6,7 +5,7 @@ from normalisation import VERSION_NORMALISATION
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 RACINE = os.path.dirname(ICI)
-SORTIE = os.path.join(RACINE, "modeles", "modele-lettres.json")  # tiret : doit matcher classifieur.js
+SORTIE = os.path.join(RACINE, "modeles", "modele-lettres.json")
 
 prototypes = {}
 def ajouter(e):
@@ -15,7 +14,6 @@ def ajouter(e):
     for v in trames:
         prototypes.setdefault(lettre, []).append(v)
 
-# Tes exports de Collecte s'appellent capture_*.json, dans entrainement/
 for c in sorted(glob.glob(os.path.join(ICI, "capture_*.json"))):
     with open(c, encoding="utf-8") as f:
         d = json.load(f)

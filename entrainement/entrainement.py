@@ -28,7 +28,6 @@ Usage :
   python entrainement/entrainement.py                 # défauts raisonnables
   python entrainement/entrainement.py --prototypes 5 --jitter 2 --miroir
 """
-# Pipeline VIDÉO (.mp4 → .npz → modèle, avec éval/LOSO). Nécessite entrainement/videos/.
 import argparse
 import json
 import os
@@ -48,7 +47,6 @@ SORTIE_MATRICE_TXT = os.path.join(ICI, "matrice_confusion.txt")
 SORTIE_MATRICE_PNG = os.path.join(ICI, "matrice_confusion.png")
 
 
-# ----------------------------- Augmentation -------------------------------
 
 def augmenter(X, y, signeurs, nb_copies, miroir, graine):
     """
@@ -63,7 +61,7 @@ def augmenter(X, y, signeurs, nb_copies, miroir, graine):
     lots_X, lots_y, lots_s = [X], [y], [signeurs]
 
     def rotation_aleatoire():
-        angles = rng.uniform(-0.09, 0.09, size=3)  # ± ~5° par axe
+        angles = rng.uniform(-0.09, 0.09, size=3)
         cx, sx = np.cos(angles[0]), np.sin(angles[0])
         cy, sy = np.cos(angles[1]), np.sin(angles[1])
         cz, sz = np.cos(angles[2]), np.sin(angles[2])
@@ -82,7 +80,7 @@ def augmenter(X, y, signeurs, nb_copies, miroir, graine):
 
     if miroir:
         copie = X.reshape(-1, 21, 3).copy()
-        copie[:, :, 0] *= -1  # inversion de l'axe X
+        copie[:, :, 0] *= -1
         lots_X.append(copie.reshape(-1, 63).astype(np.float32))
         lots_y.append(y)
         lots_s.append(signeurs)
@@ -90,7 +88,6 @@ def augmenter(X, y, signeurs, nb_copies, miroir, graine):
     return (np.concatenate(lots_X), np.concatenate(lots_y), np.concatenate(lots_s))
 
 
-# ------------------------- KNN sur centroïdes ------------------------------
 
 def calculer_prototypes(X, y, k_prototypes, graine):
     """K-means INTRA-CLASSE : quelques centres par lettre."""
@@ -138,7 +135,6 @@ def aplatir(prototypes):
     return [(lettre, np.asarray(p)) for lettre, liste in prototypes.items() for p in liste]
 
 
-# ------------------------------ Évaluation ---------------------------------
 
 def evaluer(X_app, y_app, X_test, y_test, k_prototypes, graine):
     """Entraîne sur (X_app) et évalue sur (X_test). Renvoie les métriques."""
@@ -168,7 +164,6 @@ def matrice_confusion(y_vrai, y_pred, lettres):
 
 
 def sauver_matrice(m, lettres):
-    # Texte aligné (lisible en terminal et versionnable).
     largeur = 4
     lignes = ["Matrice de confusion (lignes = vraie lettre, colonnes = prédite)", ""]
     lignes.append(" " * 5 + "".join(f"{l:>{largeur}}" for l in lettres))
@@ -177,7 +172,6 @@ def sauver_matrice(m, lettres):
     with open(SORTIE_MATRICE_TXT, "w", encoding="utf-8") as f:
         f.write("\n".join(lignes) + "\n")
 
-    # Image pour le rapport.
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -199,7 +193,6 @@ def sauver_matrice(m, lettres):
     plt.close(fig)
 
 
-# --------------------------------- Main ------------------------------------
 
 def main():
     ap = argparse.ArgumentParser(description="Entraîne le classifieur de lettres (KNN centroïdes).")
@@ -227,11 +220,8 @@ def main():
     liste_signeurs = sorted(set(signeurs.tolist()))
     print(f"{len(X)} échantillons · {len(lettres)} lettres · signeurs : {', '.join(liste_signeurs)}")
 
-    # --- Augmentation (sur une copie : l'évaluation 80/20 augmente seulement
-    #     le jeu d'apprentissage, jamais le jeu de test). ---
     rng = np.random.default_rng(args.graine)
 
-    # Découpage stratifié par lettre.
     idx_app, idx_test = [], []
     for lettre in lettres:
         indices = np.flatnonzero(y == lettre)
@@ -249,7 +239,6 @@ def main():
     res = evaluer(X_app, y_app, X[idx_test], y[idx_test], args.prototypes, args.graine)
     print(f"Accuracy globale : {res['accuracy']:.1%}  ({len(idx_test)} exemples de test)")
 
-    # Accuracy par lettre.
     print("\nAccuracy par lettre :")
     par_lettre = defaultdict(lambda: [0, 0])
     for vrai, ok in zip(y[idx_test], res["exactes"]):
@@ -265,7 +254,6 @@ def main():
     print(f"\nMatrice de confusion → {os.path.relpath(SORTIE_MATRICE_TXT, RACINE)}"
           f" et .png (à mettre dans le rapport)")
 
-    # Conseil de seuil pour la machine à états (basé sur la règle 1 − d1/d2).
     conf_ok = res["confiances"][res["exactes"]]
     conf_ko = res["confiances"][~res["exactes"]]
     if len(conf_ok):
@@ -277,7 +265,6 @@ def main():
         print(f"→ SEUIL_HAUT suggéré dans js/config.js : ~{suggestion} "
               f"(actuel : 0.85 ; ajustez selon le taux d'abstention vécu)")
 
-    # --- Leave-one-signer-out : l'écart honnête signeur connu / non vu. ---
     loso_par_signeur = {}
     loso_vrai, loso_pred = [], []
     if len(liste_signeurs) >= 2:
@@ -301,13 +288,11 @@ def main():
         print("\n(Un seul signeur : pas de leave-one-signer-out possible. "
           "Ajoutez les vidéos d'un camarade pour mesurer la généralisation.)")
 
-    # --- Exports JSON pour l'onglet Statistiques de l'application. ---
-    # Matrice de confusion LOSO si possible (la plus parlante), sinon 80/20.
     if loso_vrai:
         m_app = matrice_confusion(np.asarray(loso_vrai), np.asarray(loso_pred), lettres)
         type_matrice = "leave-one-signer-out"
     else:
-        m_app = m  # la matrice 80/20 déjà calculée plus haut
+        m_app = m
         type_matrice = "80/20"
     with open(os.path.join(RACINE, "modeles", "confusion.json"), "w", encoding="utf-8") as f:
         json.dump({"type": type_matrice, "labels": lettres, "matrice": m_app.tolist()}, f)
@@ -326,7 +311,6 @@ def main():
         json.dump(stats, f, ensure_ascii=False)
     print(f"Stats + matrice ({type_matrice}) → modeles/stats.json, modeles/confusion.json")
 
-    # --- Modèle FINAL : entraîné sur TOUTES les données (+ augmentation). ---
     X_tout, y_tout, _ = augmenter(X, y, signeurs, args.jitter, args.miroir, args.graine)
     prototypes = calculer_prototypes(X_tout, y_tout, args.prototypes, args.graine)
 

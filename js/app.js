@@ -15,13 +15,11 @@ const collecte = new EcranCollecte()
 const statistiques = new GestionnaireStatistiques()
 
 
-// Chaque lettre validée en Conversation alimente les stats de confiance.
 conversation.surValidationLettre = (lettre, vecteur, confiance) => {
   statistiques.enregistrerLettre(lettre, confiance)
 }
 
 new Navigation({
-  // Changer de section coupe la caméra : elle ne tourne jamais « dans le dos ».
   surChangement: (section) => {
     if (section !== 'conversation' && conversation.cameraActive) {
       conversation.arreterCamera()
@@ -33,12 +31,11 @@ new Navigation({
 })
 
 /* ----------------------- Grille du dictionnaire -------------------------- */
-// Les 26 lettres de la dactylologie ; les lettres à mouvement sont signalées.
 const grille = document.getElementById('grille-alphabet')
 for (const lettre of ALPHABET) {
   const carte = document.createElement('figure')
   carte.className = 'carte-lettre'
-  carte.setAttribute('tabindex', '0') // Accessibilité clavier
+  carte.setAttribute('tabindex', '0')
   carte.setAttribute('role', 'button')
   carte.setAttribute('aria-label', `Voir le geste pour la lettre ${lettre}`)
   const grand = document.createElement('span')
@@ -54,7 +51,6 @@ for (const lettre of ALPHABET) {
   grille.appendChild(carte)
 }
 
-// Initialiser le comportement du dictionnaire (modal)
 initialiserDictionnaire()
 
 /* ------------------------------ Mode démo -------------------------------- */
@@ -62,7 +58,6 @@ if (new URLSearchParams(location.search).get('demo') === '1') {
   document.body.classList.add('mode-application')
   document.getElementById('etat-camera').textContent = 'Mode démo'
 
-  // Un signeur simulé épelle « LSF », pause, puis « OK ».
   const mock = new ClassifieurMock({ script: 'LSF' })
   const mock2 = new ClassifieurMock({ script: 'OK' })
   const vecteurFactice = new Float32Array(63)
@@ -78,7 +73,6 @@ if (new URLSearchParams(location.search).get('demo') === '1') {
       prediction = mock.predire(vecteurFactice)
       if (mock.terminee) phase = 2
     } else if (phase === 2) {
-      // Pause volontaire (main baissée) → la machine insère une espace.
       mainVisible = false
       tramesPause += 1
       if (tramesPause > Math.ceil(CONFIG.DELAI_ESPACE_MS / 33) + 10) phase = 3
@@ -93,5 +87,5 @@ if (new URLSearchParams(location.search).get('demo') === '1') {
     const resultat = conversation.machine.pousser(prediction, performance.now())
     conversation.appliquerResultat(resultat, mainVisible)
     if (phase === 4 && tramesPause > 200) clearInterval(intervalle)
-  }, 33) // ≈ 30 trames/seconde, comme la caméra
+  }, 33)
 }

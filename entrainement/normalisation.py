@@ -20,7 +20,6 @@ comme le Float32Array du navigateur.
 import math
 import struct
 
-# Doit être STRICTEMENT identique à VERSION_NORMALISATION dans js/normalisation.js.
 VERSION_NORMALISATION = "main-63d-v2"
 
 POIGNET = 0
@@ -29,7 +28,6 @@ BASE_INDEX = 5
 BASE_AURICULAIRE = 17
 
 
-# --- Petites opérations vectorielles 3D (mêmes que le JS). ---
 def _soustraire(a, b):
     return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
 
@@ -75,22 +73,18 @@ def normaliser_main(landmarks, lateralite="Right"):
     poignet = pts[POIGNET]
     majeur = pts[BASE_MAJEUR]
 
-    # Échelle de référence : distance poignet → base du majeur.
     vers_majeur = _soustraire(majeur, poignet)
     echelle = _longueur(vers_majeur)
     if echelle < 1e-6:
-        return None  # main dégénérée (mauvaise détection)
+        return None
 
-    # Repère canonique de la main.
     axe_y = _normaliser_vecteur(vers_majeur)
     travers_paume = _soustraire(pts[BASE_INDEX], pts[BASE_AURICULAIRE])
-    axe_z = _normaliser_vecteur(_produit_vectoriel(travers_paume, axe_y))  # normale paume
+    axe_z = _normaliser_vecteur(_produit_vectoriel(travers_paume, axe_y))
     axe_x = _normaliser_vecteur(_produit_vectoriel(axe_y, axe_z))
     if _longueur(axe_z) < 1e-6:
         return None
 
-    # Miroir gauche → droite : on inverse l'axe Z
-    # Miroir gauche → droite : on inverse l'axe Z (normale de la paume).
     miroir = -1.0 if lateralite == "Left" else 1.0
 
     vecteur = [0.0] * 63

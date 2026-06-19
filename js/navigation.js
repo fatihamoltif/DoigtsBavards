@@ -26,29 +26,22 @@ export class Navigation {
     this.indicateur = document.getElementById('indicateur-onglet')
     this.sectionActive = 'conversation'
 
-    // Boutons d'entrée (hero + appel final) : glissent vers l'application.
     for (const bouton of document.querySelectorAll('[data-action="ouvrir-app"]')) {
       bouton.addEventListener('click', () => this.ouvrirApplication())
     }
-    // Logo : retour à l'accueil.
     document.getElementById('lien-accueil').addEventListener('click', () => {
       this.ouvrirAccueil()
     })
 
-    // Clic sur un onglet → glissement vers la section.
     for (const onglet of this.onglets) {
       onglet.addEventListener('click', () => this.allerA(onglet.dataset.section))
     }
 
-    // L'indicateur doit suivre l'onglet si la fenêtre change de taille.
     window.addEventListener('resize', () => {
       this.placerIndicateur()
       this.ajusterHauteur()
     })
 
-    // La fenêtre prend la hauteur du panneau ACTIF (et non du plus grand) :
-    // plus de vide à scroller sous les onglets plus courts. On recalcule aussi
-    // quand le contenu d'un panneau change (ex. caméra, matrice, grille).
     if ('ResizeObserver' in window) {
       const observateur = new ResizeObserver(() => this.ajusterHauteur())
       for (const p of this.panneaux) observateur.observe(p)
@@ -58,7 +51,6 @@ export class Navigation {
 
   ouvrirApplication() {
     document.body.classList.add('mode-application')
-    // L'indicateur ne peut être mesuré que quand le menu est visible.
     requestAnimationFrame(() => {
       this.placerIndicateur()
       this.ajusterHauteur()
@@ -75,7 +67,6 @@ export class Navigation {
     if (index < 0 || id === this.sectionActive) return
     this.sectionActive = id
 
-    // Glissement : chaque panneau occupe 100 % de la largeur.
     this.piste.style.transform = `translateX(-${index * 100}%)`
 
     for (const onglet of this.onglets) {
